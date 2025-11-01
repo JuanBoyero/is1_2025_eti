@@ -18,5 +18,5 @@ CREATE TABLE professor (
     password TEXT NOT NULL,              -- Contraseña hasheada (TEXT es el tipo de cadena recomendado para SQLite)
     real_name TEXT NOT NULL,             -- Nombre del profesor     
     surname TEXT NOT NULL,               -- Apellido del profesor
-    dni VARCHAR(8) NOT NULL,             -- DNI del profesor 
+    dni VARCHAR(8) NOT NULL UNIQUE,             -- DNI del profesor 
 );
