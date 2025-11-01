@@ -14,6 +14,10 @@ public class User extends Model {
     // Opcional: Puedes agregar métodos getters y setters si prefieres un acceso más tipado,
     // aunque los métodos genéricos de Model (getString(), set(), getInteger(), etc.) ya funcionan.
 
+    public Integer getID(){
+        return getInteger("id"); //Obtiene el valor de la columna id
+    }
+
     public String getName() {
         return getString("name"); // Obtiene el valor de la columna 'name'
     }

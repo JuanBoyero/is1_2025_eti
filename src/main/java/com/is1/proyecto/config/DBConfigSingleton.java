@@ -22,7 +22,7 @@ public final class DBConfigSingleton {
         this.pass = ""; // SQLite no usa contraseña
     }
 
-    public static synchronized DBConfigSingleton getInstance() {
+    public static synchronized DBConfigSingleton getInstance() { 
         if (instance == null) {
             instance = new DBConfigSingleton();
         }
