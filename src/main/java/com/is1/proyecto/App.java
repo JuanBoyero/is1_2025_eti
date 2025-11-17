@@ -3,6 +3,8 @@ package com.is1.proyecto; // Define el paquete de la aplicación, debe coincidir
 // Importaciones necesarias para la aplicación Spark
 import java.util.HashMap; // Utilidad para serializar/deserializar objetos Java a/desde JSON.
 import java.util.Map; // Importa los métodos estáticos principales de Spark (get, post, before, after, etc.).
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.javalite.activejdbc.Base; // Clase central de ActiveJDBC para gestionar la conexión a la base de datos.
 import org.mindrot.jbcrypt.BCrypt; // Utilidad para hashear y verificar contraseñas de forma segura.
@@ -348,17 +350,15 @@ public class App {
             }
 
             String name = req.queryParams("name");
-            String password = req.queryParams("password");
-            String realName = req.queryParams("real_name");
+            String email = req.queryParams("real_name");
             String surname = req.queryParams("surname");
             String dni = req.queryParams("dni");
 
             // Validación: Campos obligatorios
             if (name == null || name.trim().isEmpty() ||
-                    password == null || password.trim().isEmpty() ||
-                    realName == null || realName.trim().isEmpty() ||
-                    surname == null || surname.trim().isEmpty() ||
-                    dni == null || dni.trim().isEmpty()) {
+                email == null || email.trim().isEmpty() ||
+                surname == null || surname.trim().isEmpty() ||
+                dni == null || dni.trim().isEmpty()) {
                 res.status(400);
                 res.redirect("/professor/create?error=Todos los campos son obligatorios.");
                 return "";
@@ -372,11 +372,24 @@ public class App {
                     return "";
                 }
 
-                // Validación: Nombre de usuario duplicado
-                Professor existingByName = Professor.findFirst("name = ?", name);
-                if (existingByName != null) {
+                // Validación: email  duplicado
+                Professor existingByEmail = Professor.findFirst("email = ?", email);
+                if (existingByEmail != null) {
                     res.status(400);
-                    res.redirect("/professor/create?error=El nombre de usuario ya está registrado en el sistema.");
+                    res.redirect("/professor/create?error=El el email ya está registrado en el sistema.");
+                    return "";
+                }
+                
+                //Validacion: email valido
+                //Repo utilizado : https://gist.github.com/donpandix/68dc90a2cde27106c4b960074dce3c17
+
+                Professor validEmail = Professor.findFirst("email = ?", email);
+                Pattern pattern = Pattern.compile("^([0-9a-zA-Z]+[-._+&])*[0-9a-zA-Z]+@([-0-9a-zA-Z]+[.])+[a-zA-Z]{2,6}$");
+		        Matcher matcher = pattern.matcher(validEmail.getEmail());
+		        Boolean valid = matcher.matches();
+                if (!valid) {
+                    res.status(400);
+                    res.redirect("/professor/create?error=El email tiene un formato invalido.");
                     return "";
                 }
 
@@ -392,18 +405,14 @@ public class App {
                 Professor professor = new Professor();
                 professor.set("name", name.trim());
 
-                // Hashear la contraseña de forma segura
-                String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-                professor.set("password", hashedPassword);
-
-                professor.set("real_name", realName.trim());
+                professor.set("email", email.trim());
                 professor.set("surname", surname.trim());
                 professor.set("dni", dni.trim());
                 professor.saveIt();
 
                 res.status(201);
                 res.redirect(
-                        "/professor/create?message=Profesor " + realName + " " + surname + " registrado exitosamente.");
+                        "/professor/create?message=Profesor " + name + " " + surname + " registrado exitosamente.");
                 return "";
 
             } catch (Exception e) {
