@@ -29,20 +29,12 @@ public class Professor extends Model {
         set("name", name); // Establece el valor de la columna 'name'
     }
 
-    public String getPassword() {
-        return getString("password"); // Obtiene el valor de la columna 'password'
+    public String getEmail() {
+        return getString("email"); // Obtiene el valor de la columna 'email'
     }
 
-    public void setPassword(String password) {
-        set("password", password); // Establece el valor de la columna 'password'
-    }
-
-    public String getRealName() {
-        return getString("real_name"); // Obtiene el valor de la columna 'real_name'
-    }
-
-    public void setRealName(String realName) {
-        set("real_name", realName); // Establece el valor de la columna 'real_name'
+    public void setEmail(String email) {
+        set("email", email); // Establece el valor de la columna 'email'
     }
 
     public String getSurname() {
@@ -65,6 +57,6 @@ public class Professor extends Model {
      * Obtiene el nombre completo del profesor
      */
     public String getNombreCompleto() {
-        return getRealName() + " " + getSurname(); // Combina el nombre real y el apellido
+        return getName() + " " + getSurname(); // Combina el nombre real y el apellido
     }
 }
