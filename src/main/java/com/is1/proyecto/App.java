@@ -350,7 +350,7 @@ public class App {
             }
 
             String name = req.queryParams("name");
-            String email = req.queryParams("real_name");
+            String email = req.queryParams("email");
             String surname = req.queryParams("surname");
             String dni = req.queryParams("dni");
 
@@ -404,7 +404,6 @@ public class App {
                 // Crear y guardar el profesor
                 Professor professor = new Professor();
                 professor.set("name", name.trim());
-
                 professor.set("email", email.trim());
                 professor.set("surname", surname.trim());
                 professor.set("dni", dni.trim());
