@@ -2,6 +2,7 @@ package com.is1.proyecto; // Define el paquete de la aplicación, debe coincidir
 
 // Importaciones necesarias para la aplicación Spark
 import java.util.HashMap; // Utilidad para serializar/deserializar objetos Java a/desde JSON.
+import java.util.List;
 import java.util.Map; // Importa los métodos estáticos principales de Spark (get, post, before, after, etc.).
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,6 +12,8 @@ import org.mindrot.jbcrypt.BCrypt; // Utilidad para hashear y verificar contrase
 
 import com.fasterxml.jackson.databind.ObjectMapper; // Representa un modelo de datos y el nombre de la vista a renderizar.
 import com.is1.proyecto.config.DBConfigSingleton; // Motor de plantillas Mustache para Spark.
+import com.is1.proyecto.models.Course;
+import com.is1.proyecto.models.Dictated;
 import com.is1.proyecto.models.Professor; // Modelo de ActiveJDBC que representa la tabla 'Professor'. 
 import com.is1.proyecto.models.User; // Para crear mapas de datos (modelos para las plantillas).
 
@@ -70,7 +73,8 @@ public class App {
         after((req, res) -> {
             try {
                 // Cierra la conexión a la base de datos para liberar recursos.
-                Base.close();
+                 Base.close();
+                
             } catch (Exception e) {
                 // Si ocurre un error al cerrar la conexión, se registra.
                 System.err.println("Error al cerrar conexión con ActiveJDBC: " + e.getMessage());
@@ -318,13 +322,22 @@ public class App {
 
         // GET: Muestra el formulario de registro de profesor
         get("/professor/create", (req, res) -> {
+            
             Map<String, Object> model = new HashMap<>();
+
+           
 
             // Verificar que el usuario esté autenticado
             Boolean loggedIn = req.session().attribute("loggedIn");
             if (loggedIn == null || !loggedIn) {
                 res.redirect("/login?error=Debes iniciar sesión para acceder a esta página.");
                 return null;
+            }
+
+            //Listado de cursos
+            List<Course> courses = Course.findAll().orderBy("name ASC");
+            if(courses!=null && !courses.isEmpty()){
+                model.put("courses", courses); //Verifico que haya cursos cargados
             }
 
             String successMessage = req.queryParams("message");
@@ -350,19 +363,37 @@ public class App {
             }
 
             String name = req.queryParams("name");
-            String email = req.queryParams("real_name");
+            String email = req.queryParams("email");
             String surname = req.queryParams("surname");
             String dni = req.queryParams("dni");
 
-            // Validación: Campos obligatorios
-            if (name == null || name.trim().isEmpty() ||
-                email == null || email.trim().isEmpty() ||
-                surname == null || surname.trim().isEmpty() ||
-                dni == null || dni.trim().isEmpty()) {
+            // Validación: Campos obligatorios LLENOS
+            //EMAIL
+            if (email == null || email.trim().isEmpty()) {
                 res.status(400);
-                res.redirect("/professor/create?error=Todos los campos son obligatorios.");
+                res.redirect("/professor/create?error=Campo Email es OBLIGATORIO");
                 return "";
             }
+            //NOMBRE
+            if (name == null || name.trim().isEmpty()) {
+                res.status(400);
+                res.redirect("/professor/create?error=Campo Nombre es OBLIGATORIO");
+                return "";
+            }
+            //APELLIDO
+            if (surname == null || surname.trim().isEmpty()) {
+                res.status(400);
+                res.redirect("/professor/create?error=Campo Apellido es OBLIGATORIO");
+                return "";
+            }
+            //DNI
+            if (dni == null || dni.trim().isEmpty()) {
+                res.status(400);
+                res.redirect("/professor/create?error=Campo DNI es OBLIGATORIO");
+                return "";
+            }
+
+
 
             try {
                 // Validación: DNI debe tener 7 u 8 dígitos
@@ -383,9 +414,9 @@ public class App {
                 //Validacion: email valido
                 //Repo utilizado : https://gist.github.com/donpandix/68dc90a2cde27106c4b960074dce3c17
 
-                Professor validEmail = Professor.findFirst("email = ?", email);
+                String validEmail = email;
                 Pattern pattern = Pattern.compile("^([0-9a-zA-Z]+[-._+&])*[0-9a-zA-Z]+@([-0-9a-zA-Z]+[.])+[a-zA-Z]{2,6}$");
-		        Matcher matcher = pattern.matcher(validEmail.getEmail());
+		        Matcher matcher = pattern.matcher(validEmail);
 		        Boolean valid = matcher.matches();
                 if (!valid) {
                     res.status(400);
@@ -408,7 +439,26 @@ public class App {
                 professor.set("email", email.trim());
                 professor.set("surname", surname.trim());
                 professor.set("dni", dni.trim());
-                professor.saveIt();
+                professor.saveIt(); //Guardo el profesor
+
+                //Aca voy a seguir con las materias
+
+                Long newProfessorID = professor.getLongId();
+                //Guardo todos los id de las materias seleccionadas del menu
+                String[] courseIds = req.queryParamsValues("course_ids");
+
+                if(courseIds != null)
+                    for (String courseID_Str : courseIds) {
+                        //Lo paso de string a integer
+                        Long courseID = Long.parseLong(courseID_Str);
+
+                        //Creo el modelo para cargarlo a la bd
+                        Dictated asignatura = new Dictated();
+                        asignatura.set("idProfessor", newProfessorID); //Cargo en "idProfessor" el valor newProfessorÎD
+                        asignatura.set("idCourse",courseID); //Cargo en "idCourse" EL VALOR courseID 
+                        //Lo guardo
+                        asignatura.saveIt();
+                    }
 
                 res.status(201);
                 res.redirect(
@@ -422,6 +472,6 @@ public class App {
                 res.redirect("/professor/create?error=Error interno al registrar el profesor. Intente de nuevo.");
                 return "";
             }
-        });
+        }); 
     } // Fin del método main
 } // Fin de la clase App
