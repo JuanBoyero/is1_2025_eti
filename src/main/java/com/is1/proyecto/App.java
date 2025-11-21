@@ -7,24 +7,33 @@ import java.util.Map; // Importa los métodos estáticos principales de Spark (g
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.javalite.activejdbc.Base; // Clase central de ActiveJDBC para gestionar la conexión a la base de datos.
-import org.mindrot.jbcrypt.BCrypt; // Utilidad para hashear y verificar contraseñas de forma segura.
+import org.javalite.activejdbc.Base;
+import org.mindrot.jbcrypt.BCrypt;
 
+<<<<<<< HEAD
 import com.fasterxml.jackson.databind.ObjectMapper; // Representa un modelo de datos y el nombre de la vista a renderizar.
 import com.is1.proyecto.config.DBConfigSingleton; // Motor de plantillas Mustache para Spark.
 import com.is1.proyecto.models.Course;
 import com.is1.proyecto.models.Dictated;
 import com.is1.proyecto.models.Professor; // Modelo de ActiveJDBC que representa la tabla 'Professor'. 
 import com.is1.proyecto.models.User; // Para crear mapas de datos (modelos para las plantillas).
+=======
+import com.fasterxml.jackson.databind.ObjectMapper; // Clase central de ActiveJDBC para gestionar la conexión a la base de datos.
+import com.is1.proyecto.config.DBConfigSingleton; // Utilidad para hashear y verificar contraseñas de forma segura.
+import com.is1.proyecto.models.Professor; // Representa un modelo de datos y el nombre de la vista a renderizar.
+import com.is1.proyecto.models.User; // Motor de plantillas Mustache para Spark.
+>>>>>>> 49c35dd92f908516184f7ad644ae667a865c91f3
 
-import spark.ModelAndView; // Interfaz Map, utilizada para Map.of() o HashMap.
-import static spark.Spark.after; // Clase Singleton para la configuración de la base de datos.
-import static spark.Spark.before; // Modelo de ActiveJDBC que representa la tabla 'users'.
-import static spark.Spark.get;
-import static spark.Spark.halt;
+import spark.ModelAndView; // Modelo de ActiveJDBC que representa la tabla 'Professor'.
+import static spark.Spark.after; // Para crear mapas de datos (modelos para las plantillas).
+import static spark.Spark.before; // Interfaz Map, utilizada para Map.of() o HashMap.
+import static spark.Spark.get; // Clase Singleton para la configuración de la base de datos.
+import static spark.Spark.halt; // Modelo de ActiveJDBC que representa la tabla 'users'.
 import static spark.Spark.port;
 import static spark.Spark.post;
 import spark.template.mustache.MustacheTemplateEngine;
+
+
 
 /**
  * Clase principal de la aplicación Spark.
@@ -355,13 +364,7 @@ public class App {
 
         // POST: Maneja el envío del formulario de registro de profesor
         post("/professor/new", (req, res) -> {
-            // Verificar que el usuario esté autenticado
-            Boolean loggedIn = req.session().attribute("loggedIn");
-            if (loggedIn == null || !loggedIn) {
-                res.redirect("/login?error=Debes iniciar sesión para realizar esta acción.");
-                return "";
-            }
-
+            
             String name = req.queryParams("name");
             String email = req.queryParams("email");
             String surname = req.queryParams("surname");
@@ -413,7 +416,6 @@ public class App {
                 
                 //Validacion: email valido
                 //Repo utilizado : https://gist.github.com/donpandix/68dc90a2cde27106c4b960074dce3c17
-
                 String validEmail = email;
                 Pattern pattern = Pattern.compile("^([0-9a-zA-Z]+[-._+&])*[0-9a-zA-Z]+@([-0-9a-zA-Z]+[.])+[a-zA-Z]{2,6}$");
 		        Matcher matcher = pattern.matcher(validEmail);
@@ -423,7 +425,7 @@ public class App {
                     res.redirect("/professor/create?error=El email tiene un formato invalido.");
                     return "";
                 }
-
+                
                 // Validación: DNI duplicado
                 Professor existingByDni = Professor.findFirst("dni = ?", dni);
                 if (existingByDni != null) {
@@ -435,7 +437,6 @@ public class App {
                 // Crear y guardar el profesor
                 Professor professor = new Professor();
                 professor.set("name", name.trim());
-
                 professor.set("email", email.trim());
                 professor.set("surname", surname.trim());
                 professor.set("dni", dni.trim());
