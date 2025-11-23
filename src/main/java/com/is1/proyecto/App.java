@@ -466,6 +466,90 @@ public class App {
                 res.redirect("/professor/create?error=Error interno al registrar el profesor. Intente de nuevo.");
                 return "";
             }
-        }); 
+        });
+        
+        // GET: Muestra el formulario para crear una nueva materia.
+        get("/coursed/create", (req, res) -> {
+            
+            Map<String, Object> model = new HashMap<>();
+
+            Boolean loggedIn = req.session().attribute("loggedIn");
+            if (loggedIn == null || !loggedIn) {
+                res.redirect("/login?error=Debes iniciar sesión para acceder a esta página.");
+                return null;
+            }
+
+            String successMessage = req.queryParams("message");
+            if (successMessage != null && !successMessage.isEmpty()) {
+                model.put("successMessage", successMessage);
+            }
+
+            String errorMessage = req.queryParams("error");
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                model.put("errorMessage", errorMessage);
+            }
+
+            return new ModelAndView(model, "coursed.mustache");
+        }, new MustacheTemplateEngine());
+
+        // POST: Maneja el envío del formulario para crear una nueva materia.
+        post("/coursed/new", (req, res) -> {
+            
+            String name = req.queryParams("name");
+            String courseLoadStr = req.queryParams("courseLoad");
+
+            if (name == null || name.trim().isEmpty()) {
+                res.status(400);
+                res.redirect("/coursed/creart?error=El campo Nombre de la Materia es OBLIGATORIO.");
+                return "";
+            }
+            
+            if (courseLoadStr == null || courseLoadStr.trim().isEmpty()) {
+                res.status(400);
+                res.redirect("/coursed/creart?error=El campo Carga Horaria es OBLIGATORIO.");
+                return "";
+            }
+            
+            int courseLoad;
+            try {
+                courseLoad = Integer.parseInt(courseLoadStr.trim());
+                if (courseLoad <= 0) {
+                    res.status(400);
+                    res.redirect("/coursed/creart?error=La Carga Horaria debe ser un número entero positivo.");
+                    return "";
+                }
+            } catch (NumberFormatException e) {
+                res.status(400);
+                res.redirect("/coursed/creart?error=La Carga Horaria debe ser un número entero válido.");
+                return "";
+            }
+
+            try {
+                Course existingCourse = Course.findFirst("name = ?", name.trim());
+                if (existingCourse != null) {
+                    res.status(400);
+                    res.redirect("/coursed/creart?error=El nombre de la materia ya existe en el sistema.");
+                    return "";
+                }
+
+                // 4. Crear y guardar la materia
+                Course newCourse = new Course();
+                newCourse.set("name", name.trim());
+                newCourse.set("courseLoad", courseLoad);
+                newCourse.saveIt();
+
+                res.status(201);
+                res.redirect(
+                        "/coursed/creart?message=Materia '" + name.trim() + "' registrada exitosamente.");
+                return "";
+
+            } catch (Exception e) {
+                System.err.println("Error al registrar materia: " + e.getMessage());
+                e.printStackTrace();
+                res.status(500);
+                res.redirect("/coursed/creart?error=Error interno al registrar la materia. Intente de nuevo.");
+                return "";
+            }
+        });
     } // Fin del método main
 } // Fin de la clase App
