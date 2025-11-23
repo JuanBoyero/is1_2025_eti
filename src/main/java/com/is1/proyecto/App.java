@@ -10,19 +10,12 @@ import java.util.regex.Pattern;
 import org.javalite.activejdbc.Base;
 import org.mindrot.jbcrypt.BCrypt;
 
-<<<<<<< HEAD
 import com.fasterxml.jackson.databind.ObjectMapper; // Representa un modelo de datos y el nombre de la vista a renderizar.
 import com.is1.proyecto.config.DBConfigSingleton; // Motor de plantillas Mustache para Spark.
 import com.is1.proyecto.models.Course;
 import com.is1.proyecto.models.Dictated;
 import com.is1.proyecto.models.Professor; // Modelo de ActiveJDBC que representa la tabla 'Professor'. 
 import com.is1.proyecto.models.User; // Para crear mapas de datos (modelos para las plantillas).
-=======
-import com.fasterxml.jackson.databind.ObjectMapper; // Clase central de ActiveJDBC para gestionar la conexión a la base de datos.
-import com.is1.proyecto.config.DBConfigSingleton; // Utilidad para hashear y verificar contraseñas de forma segura.
-import com.is1.proyecto.models.Professor; // Representa un modelo de datos y el nombre de la vista a renderizar.
-import com.is1.proyecto.models.User; // Motor de plantillas Mustache para Spark.
->>>>>>> 49c35dd92f908516184f7ad644ae667a865c91f3
 
 import spark.ModelAndView; // Modelo de ActiveJDBC que representa la tabla 'Professor'.
 import static spark.Spark.after; // Para crear mapas de datos (modelos para las plantillas).
