@@ -531,9 +531,8 @@ public class App {
                     res.status(400);
                     res.redirect("/coursed/create?error=El nombre de la materia ya existe en el sistema.");
                     return "";
-                }
-
-                //Crear y guardar la materia
+                }else{
+                   //Crear y guardar la materia
                 Course newCourse = new Course();
                 newCourse.set("name", name.trim());
                 newCourse.set("courseLoad", courseLoad);
@@ -542,8 +541,8 @@ public class App {
                 res.status(201);
                 res.redirect(
                         "/coursed/create?message=Materia '" + name.trim() + "' registrada exitosamente.");
-                return "";
-
+                return ""; 
+                }
             } catch (Exception e) {
                 System.err.println("Error al registrar materia: " + e.getMessage());
                 e.printStackTrace();
