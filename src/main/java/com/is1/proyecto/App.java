@@ -489,7 +489,7 @@ public class App {
                 model.put("errorMessage", errorMessage);
             }
 
-            return new ModelAndView(model, "coursed.mustache");
+            return new ModelAndView(model, "coursed_form.mustache");
         }, new MustacheTemplateEngine());
 
         // POST: Maneja el envío del formulario para crear una nueva materia.
@@ -500,13 +500,13 @@ public class App {
 
             if (name == null || name.trim().isEmpty()) {
                 res.status(400);
-                res.redirect("/coursed/creart?error=El campo Nombre de la Materia es OBLIGATORIO.");
+                res.redirect("/coursed/create?error=El campo Nombre de la Materia es OBLIGATORIO.");
                 return "";
             }
             
             if (courseLoadStr == null || courseLoadStr.trim().isEmpty()) {
                 res.status(400);
-                res.redirect("/coursed/creart?error=El campo Carga Horaria es OBLIGATORIO.");
+                res.redirect("/coursed/create?error=El campo Carga Horaria es OBLIGATORIO.");
                 return "";
             }
             
@@ -515,12 +515,12 @@ public class App {
                 courseLoad = Integer.parseInt(courseLoadStr.trim());
                 if (courseLoad <= 0) {
                     res.status(400);
-                    res.redirect("/coursed/creart?error=La Carga Horaria debe ser un número entero positivo.");
+                    res.redirect("/coursed/create?error=La Carga Horaria debe ser un número entero positivo.");
                     return "";
                 }
             } catch (NumberFormatException e) {
                 res.status(400);
-                res.redirect("/coursed/creart?error=La Carga Horaria debe ser un número entero válido.");
+                res.redirect("/coursed/create?error=La Carga Horaria debe ser un número entero válido.");
                 return "";
             }
 
@@ -528,7 +528,7 @@ public class App {
                 Course existingCourse = Course.findFirst("name = ?", name.trim());
                 if (existingCourse != null) {
                     res.status(400);
-                    res.redirect("/coursed/creart?error=El nombre de la materia ya existe en el sistema.");
+                    res.redirect("/coursed/create?error=El nombre de la materia ya existe en el sistema.");
                     return "";
                 }
 
@@ -540,14 +540,14 @@ public class App {
 
                 res.status(201);
                 res.redirect(
-                        "/coursed/creart?message=Materia '" + name.trim() + "' registrada exitosamente.");
+                        "/coursed/create?message=Materia '" + name.trim() + "' registrada exitosamente.");
                 return "";
 
             } catch (Exception e) {
                 System.err.println("Error al registrar materia: " + e.getMessage());
                 e.printStackTrace();
                 res.status(500);
-                res.redirect("/coursed/creart?error=Error interno al registrar la materia. Intente de nuevo.");
+                res.redirect("/coursed/create?error=Error interno al registrar la materia. Intente de nuevo.");
                 return "";
             }
         });
