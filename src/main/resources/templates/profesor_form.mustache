@@ -27,16 +27,19 @@
                     EMAIL: <span class="text-red-500">*</span>
                 </label>
                 <input type="text" id="email" name="email" required
-                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                       placeholder="Ej:marcelo_uva@gmail.com">
+
             </div>
             
             <div>
                 <label for="name" class="block text-gray-700 font-semibold mb-2">
                     NOMBRE: <span class="text-red-500">*</span>
                 </label>
-                <input type="name" id="name" name="name" required minlength="6"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
-                <small class="text-gray-600">Mínimo 6 caracteres</small>
+                <input type="name" id="name" name="name" required minlength="3"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                       placeholder="Ej:Marcelo">
+                <small class="text-gray-600">Mínimo 3 caracteres</small>
             </div>
             
             <div>
@@ -44,7 +47,8 @@
                     APELLIDO: <span class="text-red-500">*</span>
                 </label>
                 <input type="text" id="surname" name="surname" required
-                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                       placeholder="Ej:Uva">
             </div>
             
             <div>
@@ -52,7 +56,8 @@
                     DNI: <span class="text-red-500">*</span>
                 </label>
                 <input type="text" id="dni" name="dni" pattern="[0-9]{7,8}" required
-                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                       placeholder="Ej:40904759">
                 <small class="text-gray-600">Ingrese 7 u 8 dígitos</small>
             </div>
 
@@ -70,10 +75,8 @@
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm bg-white 
                             focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 
                             transition duration-150 ease-in-out"
-
+                    placeholder="--MATERIA--"
                 >
-                <option value="" disable selected> MATERIA
-                </option>
 
                 {{#courses}} 
                     <option value="{{id}}">
