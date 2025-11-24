@@ -495,6 +495,7 @@ public class App {
         // POST: Maneja el envío del formulario para crear una nueva materia.
         post("/coursed/new", (req, res) -> {
             
+            //Verificacion de los datos de la materia a cargar 
             String name = req.queryParams("name");
             String courseLoadStr = req.queryParams("courseLoad");
 
@@ -532,7 +533,7 @@ public class App {
                     return "";
                 }
 
-                // 4. Crear y guardar la materia
+                //Crear y guardar la materia
                 Course newCourse = new Course();
                 newCourse.set("name", name.trim());
                 newCourse.set("courseLoad", courseLoad);
