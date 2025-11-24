@@ -9,7 +9,6 @@
     <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl">
         <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Registrar Nueva Materia (Coursed)</h1>
         
-        <!-- El 'action' debe apuntar al endpoint de tu servidor que maneja la creación de materias -->
         <form action="/coursed/new" method="post" class="space-y-4">
             
             <div>
@@ -25,7 +24,7 @@
                 <label for="courseLoad" class="block text-gray-700 font-semibold mb-2">
                     CARGA HORARIA (horas por semana): <span class="text-red-500">*</span>
                 </label>
-                <!-- Usamos type="number" y pattern para asegurar que sea un valor numérico -->
+                
                 <input type="number" id="courseLoad" name="courseLoad" required min="1" step="1"
                        pattern="[0-9]*" 
                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
