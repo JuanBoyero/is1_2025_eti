@@ -6,14 +6,27 @@
 
 ---
 ## **1 Introducción**
+Este documento es una Especificación de Requerimientos de Software para nuestro Sistema de Gestión de Universitario, donde se nos permite gestionar y visualizar a los profesores y a las materias dictadas por una institucion universitaria. Esta especificación esta estructurado basandose en el marco de la Practica Recomendada para Especificaciones de Requisitos de Software,  estándar IEEE 830 - 1998
 
 ### **1.1 Proposito**
+Este documento tiene como propósito definir las especificaciones funcionales, no funcionales para el desarrollo de un sistema de gestion universitaria  que permitirá gestionar distintos procesos administrativos. El cual será utilizado por el personal administrativo de la institución.
+
 ### **1.2 Alcance** 
 ### **1.3 Equipo de Trabajo**
 ### **1.4 Definiciones, acronimos y abreviaturas** 
-### **1.5 Referencias**
-### **1.6 Resumen**
 
+### **1.5 Referencias**
+|     Titulo del documento   | Referencia |
+|:---------------------------|:-----------|
+|Standard IEEE 830-1998      |    IEEE    |
+
+
+### **1.6 Resumen**
+Este documento consta de tres secciones. 
+En la primera sección se realiza una introducción al mismo y se proporciona una visión general de la especificación de recursos del sistema.
+En la segunda sección del documento se realiza una descripción general del sistema, con el fin de conocer las principales funciones que éste debe realizar, los datos asociados y los factores, restricciones, supuestos y dependencias que afectan al desarrollo, sin entrar en
+excesivos detalles.
+Por último, la tercera sección del documento es aquella en la que se definen detalladamente los requisitos que debe satisfacer el sistema.
 ---
 
 ## **2.Descripción General**
