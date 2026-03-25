@@ -21,6 +21,11 @@
 ### **2.1 Perspectiva del producto**
 
 ### **2.2 Funcionalidad del producto**
+##### **El Sistema cuenta con las siguientes funcionalidades:**
+- Gestion de profesores (Añadir profesores y asignarlos a materias)
+- Gestion de materias (Sumar nuevas materias con sus respectivos datos)
+
+![Casos de Uso](./images/CasoDeUso.png)
 
 ### **2.3 Caracteristicas de los usuarios** 
 
