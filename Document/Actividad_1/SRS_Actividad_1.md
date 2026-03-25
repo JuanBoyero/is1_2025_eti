@@ -46,6 +46,15 @@ Por último, la tercera sección del documento es aquella en la que se definen d
 ### **2.3 Caracteristicas de los usuarios** 
 
 ### **2.4 Resticciones**
+**Las recticciones tecnicas del sistema son:**
+- Las tecnologías utilizadas son: JAVA, Mustache, SQLite, Spark y Maven Apache.
+- La interfaz sera a traves de un sistema web, que correra en cualquier navegador.
+- El sistema puede correr en sistema operativo.
+- El sistema es dependiente de una conexión a internet.
+- El sistema se modelara en un modelo cliente/servidor.
+- La manipulacion del sistema sera unicamente por parte de los usuarios.
+- La implentacion de este sistema debe contar con un patron de diseño identificable y sencillo.
+- Debe contar con una conexion eficiente a un base de datos ligera.
 
 ### **2.5 Suposiciones y dependencias**
 
