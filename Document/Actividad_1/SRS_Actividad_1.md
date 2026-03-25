@@ -24,9 +24,12 @@ Este documento tiene como propósito definir las especificaciones funcionales, n
 ### **1.6 Resumen**
 Este documento consta de tres secciones. 
 En la primera sección se realiza una introducción al mismo y se proporciona una visión general de la especificación de recursos del sistema.
-En la segunda sección del documento se realiza una descripción general del sistema, con el fin de conocer las principales funciones que éste debe realizar, los datos asociados y los factores, restricciones, supuestos y dependencias que afectan al desarrollo, sin entrar en
+En la segunda sección del documento se realiza una descripción general del sistema, con
+el fin de conocer las principales funciones que éste debe realizar, los datos asociados y los
+factores, restricciones, supuestos y dependencias que afectan al desarrollo, sin entrar en
 excesivos detalles.
 Por último, la tercera sección del documento es aquella en la que se definen detalladamente los requisitos que debe satisfacer el sistema.
+
 ---
 
 ## **2.Descripción General**
