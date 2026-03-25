@@ -9,9 +9,9 @@
 
 ### **1.1 Proposito**
 ### **1.2 Alcance** 
-### **1.3 Equipo de Trabajo* 
+### **1.3 Equipo de Trabajo**
 ### **1.4 Definiciones, acronimos y abreviaturas** 
-### **1.5 Referencias* 
+### **1.5 Referencias**
 ### **1.6 Resumen**
 
 ---
@@ -43,11 +43,13 @@
 
 ### **3.3 Requerimientos no funcionales**  
 
-####3.3.1 Requisitos de rendimiento 
-####3.3.2 Seguridad 
-####3.3.3 Fiabilidad
-####3.3.4 Disponibilidad
-####3.3.5 Mantenibilidad
-####3.3.6 Portabilidad
+#### 3.3.1 Requisitos de rendimiento 
+#### 3.3.2 Seguridad 
+#### 3.3.3 Fiabilidad
+#### 3.3.4 Disponibilidad
+#### 3.3.5 Mantenibilidad
+#### 3.3.6 Portabilidad
 
 ---
+
+
