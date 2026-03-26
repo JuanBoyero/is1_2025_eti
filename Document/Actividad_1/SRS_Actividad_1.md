@@ -63,6 +63,16 @@ Por último, la tercera sección del documento es aquella en la que se definen d
 - La implentacion de este sistema debe contar con un patron de diseño identificable y sencillo.
 - Debe contar con una conexion eficiente a un base de datos ligera.
 
+  ### **2.4.1 Justificación del Stack Tecnológico**
+
+| Tecnología | Categoría | Justificación de su uso |
+| :--- | :--- | :--- |
+| **Java** | Lenguaje de Programación | Proporciona un entorno de ejecución robusto y orientado a objetos, ideal para modelar la lógica de negocio de una gestión universitaria compleja. |
+| **Spark Framework** | Framework Web | Micro-framework que permite una configuración rápida de rutas y servicios REST sin la sobrecarga de servidores de aplicaciones más pesados. |
+| **Mustache** | Motor de Plantillas | Facilita la renderización de vistas dinámicas manteniendo una separación estricta entre el diseño HTML y el código fuente de la aplicación. |
+| **SQLite** | Base de Datos | Motor de base de datos relacional embebido que elimina la necesidad de un servidor externo, garantizando la portabilidad del sistema entre diferentes estaciones de trabajo. |
+| **Apache Maven** | Gestión de Proyecto | Automatiza el manejo de dependencias y el proceso de compilación, asegurando que el entorno de desarrollo sea consistente para todos los integrantes del equipo. |
+
 ### **2.5 Suposiciones y dependencias**
 
 
