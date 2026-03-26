@@ -81,9 +81,32 @@ Por último, la tercera sección del documento es aquella en la que se definen d
 ### **3.1 Requisitos comunes de las interfaces**
 
 #### 3.1.1 Interfaces de usuario
-#### 3.1.2 Interfaces de hardware 
+La interface de usuario va estar determinada por un conjunto de ventanas y botones que permitiran visualizar las distintas funcionalidades del mismo.
+-Este contara con una ventana inicial de login, esta sirve para iniciar sesión 
+-Despues de iniciar sesión tendremos un dashbord con las secciones definidas y los botones para cada funcionalidad.
+
+#### 3.1.2 Interfaces de hardware
+Como interface de hardware contaremos con 2 tipos de hardware:
+- Hardware para el servidor:
+   - Debe contar con una computadora con un sistema operativo de tipo server (MS- Windows Server)
+    - Red estable por conexión ethernet, con una velocidad de 100 Mb/s o superior
+    - Un procesador de 1.4 GHz o superior 
+    - Una memoria ram de 4.0 GBs o superior
+    - Un almacenamiento interno de 60 GB o superior
+
+- Hardware para el usuario: 
+    - Debe contar con una computadora con cualquier sistema operativo, un navegador instalado y conexión estable a internet 
+    - Un procesador de 1.0 GHz o superior 
+    - Una memoria ram de 2.0 GBs o superior
+
 #### 3.1.3 Interfaces del software
+- Sistema Operativo: es posible utilizarse en cualquier sistema operativo
+  - Windows, Linux o Mac Os
+
+-Navegador web: Chrome, Brave, Mozilla, Chromium, Opera, Edge o Safarí. 
+
 #### 3.1.4 Interfaces de comunicación
+Los servidores, clientes y aplicaciones se comunicarán entre sí, mediante protocolos estándares en internet, siempre que sea posible.
 
 ### **3.2 Requerimientos funcionales**
 
