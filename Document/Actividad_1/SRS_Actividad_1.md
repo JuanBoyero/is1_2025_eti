@@ -13,6 +13,8 @@ Este documento tiene como propósito definir las especificaciones funcionales, n
 
 ### **1.2 Alcance** 
 ### **1.3 Equipo de Trabajo**
+#### **1.3.1 Tamaño Del Equipo**
+El tamaño ideal para este Sistema de Gestión Estudiantil es de 4 a 6 integrantes.
 ### **1.4 Definiciones, acronimos y abreviaturas** 
 
 ### **1.5 Referencias**
