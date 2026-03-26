@@ -44,6 +44,10 @@ Por último, la tercera sección del documento es aquella en la que se definen d
 ![Casos de Uso](./images/CasoDeUso.png)
 
 ### **2.3 Caracteristicas de los usuarios** 
+#### 2.3.1 **Usuarios del sistema**
+ - Personal de la Oficina de Alumnos: Actúan como los administradores del sistema. Su función principal es centralizar la información, llevar el registro de estudiantes y profesores, y gestionar la oferta académica y correlatividades.
+ - Estudiantes: Utilizan el sistema para consultar su información académica. Esto incluye ver qué materias están cursando, cuáles pueden cursar según su avance y revisar sus notas finales de aprobación.
+ - Profesores: Acceden al sistema para cargar notas y consultar los listados de sus alumnos. También se los registra para saber qué materias están dictando y su cargo (responsable de cátedra, JTP o ayudante)
 
 ### **2.4 Resticciones**
 **Las recticciones tecnicas del sistema son:**
@@ -58,7 +62,6 @@ Por último, la tercera sección del documento es aquella en la que se definen d
 
 ### **2.5 Suposiciones y dependencias**
 
----
 
 ## **3.Requerimientos Especificos** 
 
