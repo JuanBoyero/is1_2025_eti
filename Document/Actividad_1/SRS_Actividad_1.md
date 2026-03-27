@@ -13,7 +13,9 @@ Este documento tiene como propósito definir las especificaciones funcionales, n
 
 ### **1.2 Alcance** 
 
+### **1.2.1 Plazo Estima**
 
+El plazo estima dado para este proyecto fue de 3 semanas, en las cuales se implemento los cambios ya antes mencionados.
 
 ### **1.3 Equipo de Trabajo**
 
