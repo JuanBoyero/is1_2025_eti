@@ -12,6 +12,9 @@ Este documento es una Especificación de Requerimientos de Software para nuestro
 Este documento tiene como propósito definir las especificaciones funcionales, no funcionales para el desarrollo de un sistema de gestion universitaria  que permitirá gestionar distintos procesos administrativos. El cual será utilizado por el personal administrativo de la institución.
 
 ### **1.2 Alcance** 
+
+
+
 ### **1.3 Equipo de Trabajo**
 
 | Nombre                  | Juan Ignacio Boyero |
