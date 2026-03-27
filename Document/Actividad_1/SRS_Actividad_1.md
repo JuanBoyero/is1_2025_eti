@@ -80,7 +80,7 @@ Por último, la tercera sección del documento es aquella en la que se definen d
 ## **2.Descripción General**
 
 ### **2.1 Perspectiva del producto**
-
+El problema a resolver es la realización de un sistema que permita organizar y controlar la información académica de una institución. En particular, se busca gestionar las materias dictadas, los alumnos que pueden cursarlas y los profesores a cargo, centralizando toda esta información en un solo lugar.
 ### **2.2 Funcionalidad del producto**
 ##### **El Sistema cuenta con las siguientes funcionalidades:**
 - Gestion de profesores (Añadir profesores y asignarlos a materias)
