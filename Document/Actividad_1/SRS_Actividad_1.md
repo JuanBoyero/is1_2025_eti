@@ -13,7 +13,7 @@ Este documento tiene como propósito definir las especificaciones funcionales, n
 
 ### **1.2 Alcance** 
 
-### **1.2.1 Plazo Estima**
+### **1.2.1 Plazo Estimado**
 
 El plazo estima dado para este proyecto fue de 3 semanas, en las cuales se implemento los cambios ya antes mencionados.
 
@@ -116,7 +116,16 @@ Por último, la tercera sección del documento es aquella en la que se definen d
 | **Apache Maven** | Gestión de Proyecto | Automatiza el manejo de dependencias y el proceso de compilación, asegurando que el entorno de desarrollo sea consistente para todos los integrantes del equipo. |
 
 ### **2.5 Suposiciones y dependencias**
+Los problemas que encontramos sobre suposiciones y dependencias fueron las siguientes:
+- Al crear un usuario debemos validar que el email tenga un formato valido.
+- Al crear un usuario debemos validar que la contraseña tenga un formato valido.
+- Para logearse, un usuario debe introducir un email y contraseña valido.
+- Al crear un profesor no podemos dejar campos nulos.
+- Al cargar el DNI de un profesor debemos contar con el formato establecido.
+- Al crear un profesor debemos cerciorarnos que la materia a la que lo queremos asociar exista.
+- Al crear una materia no debemos dejar campos nulos.
 
+---
 
 ## **3.Requerimientos Especificos** 
 
@@ -155,11 +164,30 @@ Los servidores, clientes y aplicaciones se comunicarán entre sí, mediante prot
 ### **3.3 Requerimientos no funcionales**  
 
 #### 3.3.1 Requisitos de rendimiento 
+- Garantizar que el diseño de las consultas u otro proceso no afecte el rendimiento de la base de datos, ni considerablemente de la red.
+
 #### 3.3.2 Seguridad 
+- Garantizar la confiabilidad, la seguridad y el desempeño del sistema informático a los diferentes usuarios. En este sentido la información almacenada o registros realizados podrán ser consultados y actualizados permanente y simultáneamente, sin que se afecte el tiempo de respuesta.
+- Garantizar la seguridad del sistema con respecto a la información y datos que
+se manejan tales sean emails y contraseñas.
+- Facilidades y controles para permitir el acceso a la información al personal autorizado a través de Internet, con la intención de consultar y subir información pertinente para cada una de ellas.
+
 #### 3.3.3 Fiabilidad
+- El sistema debe tener una interfaz de uso intuitiva y sencilla.
+- La interfaz de usuario debe ajustarse a las características de la web de la institución, dentro de la cual estará incorporado el sistema de gestión de profesores.
+
 #### 3.3.4 Disponibilidad
+- La disponibilidad del sistema debe ser continua con un nivel de servicio para
+los usuarios de dispobilidad diaria, las 24 hs.
+
 #### 3.3.5 Mantenibilidad
+- El sistema debe disponer de una documentación fácilmente actualizable que permita realizar operaciones de mantenimiento con el menor esfuerzo posible.
+- La interfaz debe estar complementada con un buen sistema de ayuda (la
+administración puede recaer en personal con poca experiencia en el uso de
+aplicaciones informáticas).
+
 #### 3.3.6 Portabilidad
+- El sistema puede ser utilizado en cualquier sistema operativo y cualquier navegador.
 
 ---
 
