@@ -13,6 +13,43 @@ Este documento tiene como propósito definir las especificaciones funcionales, n
 
 ### **1.2 Alcance** 
 ### **1.3 Equipo de Trabajo**
+
+| Nombre                  | Juan Ignacio Boyero |
+|-------------------------|---------------------|
+| Rol                     | Lider De Grupo/Estudiante |
+| Categoría Profesional   | Estudiante de Lincenciatura De La Ciencia De La computación |
+| Responsabilidad         | Completar el Proyecto |
+| Información de contacto |  juanboyero.unrc@gmail.com |
+
+| Nombre                  | Ignacio Javier Bonahora |
+|-------------------------|---------------------|
+| Rol                     | Integrante del Grupo/Estudiante |
+| Categoría Profesional   | Estudiante de Lincenciatura De La Ciencia De La computación |
+| Responsabilidad         | Completar el Proyecto |
+| Información de contacto | bonahoraignacioj@gmail.com |
+
+| Nombre                  | Agustin Amilcar Laner |
+|-------------------------|---------------------|
+| Rol                     | Integrante del Grupo/Estudiante |
+| Categoría Profesional   | Estudiante de Lincenciatura De La Ciencia De La computación |
+| Responsabilidad         | Completar el Proyecto |
+| Información de contacto | Agustinnlanerr@gmail.com |
+
+| Nombre                  | Tomás Rosselot |
+|-------------------------|---------------------|
+| Rol                     | Integrante del Grupo/Estudiante |
+| Categoría Profesional   | Estudiante de Lincenciatura De La Ciencia De La computación |
+| Responsabilidad         | Completar el Proyecto |
+| Información de contacto | totorosselot1@gmail.com |
+
+| Nombre                  | Jose Felipe Romero |
+|-------------------------|---------------------|
+| Rol                     | Integrante del Grupo/Estudiante |
+| Categoría Profesional   | Estudiante de Lincenciatura De La Ciencia De La computación |
+| Responsabilidad         | Completar el Proyecto |
+| Información de contacto | josefeliperomero823@gmail.com |
+
+
 #### **1.3.1 Tamaño Del Equipo**
 El tamaño ideal para este Sistema de Gestión Estudiantil es de 4 a 6 integrantes.
 
