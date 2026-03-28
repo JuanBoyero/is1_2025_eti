@@ -12,6 +12,8 @@ Este documento es una Especificación de Requerimientos de Software para nuestro
 Este documento tiene como propósito definir las especificaciones funcionales, no funcionales para el desarrollo de un sistema de gestion universitaria  que permitirá gestionar distintos procesos administrativos. El cual será utilizado por el personal administrativo de la institución.
 
 ### **1.2 Alcance** 
+Durante el desarrollo del proyecto, debido a modificaciones en las fechas de entrega, el principal cambio de alcance fue la reducción del tiempo destinado al testing. 
+Esto implicó no poder profundizar en dicha actividad con el nivel de detalle previsto, con el objetivo de cumplir con los plazos de entrega establecidos.
 
 ### **1.2.1 Plazo Estimado**
 
