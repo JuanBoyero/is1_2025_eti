@@ -2,6 +2,18 @@
 
 ## **Análisis de riesgo hecho por ChatGPT Pro**
 
+### **Prompt sobre la IA**
+
+```
+Actúa como un auditor de proyectos de software.
+A partir de la siguiente descripción, identifica: - Riesgos técnicos -
+Riesgos organizacionales - Riesgos de planificación - Riesgos humanos
+Clasifícalos por probabilidad e impacto.
+```
+
+### **Analisis:**
+
+
 | Tipo de Riesgo   | Descripción                                                                 | Probabilidad | Impacto  | Identificado por |
 |:---|:---|:---|:---|:---|
 | Técnico          | Uso de patrón Singleton para la base de datos sin control de concurrencia, lo que puede generar problemas de acceso simultáneo. | Media        | Alto     | Auditor          |
