@@ -84,11 +84,25 @@ Por último, la tercera sección del documento es aquella en la que se definen d
 ### **2.1 Perspectiva del producto**
 El problema a resolver es la realización de un sistema que permita organizar y controlar la información académica de una institución. En particular, se busca gestionar las materias dictadas, los alumnos que pueden cursarlas y los profesores a cargo, centralizando toda esta información en un solo lugar.
 ### **2.2 Funcionalidad del producto**
-##### **El Sistema cuenta con las siguientes funcionalidades:**
-- Gestion de profesores (Añadir profesores y asignarlos a materias)
-- Gestion de materias (Sumar nuevas materias con sus respectivos datos)
 
-![Casos de Uso](./images/CasoDeUso.png)
+El Sistema de Gestión Universitario cuenta con las siguientes funcionalidades, según los roles definidos:
+
+* **Gestión Administrativa:**
+    * **Registro de Usuarios:** Alta y modificación de datos de profesores y estudiantes.
+    * **Gestión de Materias:** Creación y actualización de las materias de la institución.
+    * **Asignación Docente:** Vinculación de profesores con sus respectivas cátedras.
+    * **Administración de Inscripciones:** Capacidad para inscribir alumnos en las materias.
+    * **Consultas Generales:** Acceso al historial académico de los alumnos y listados de inscriptos por materia.
+
+* **Funcionalidades del Profesor:**
+    * **Carga de Notas:** Registro de calificaciones para los estudiantes inscriptos.
+    * **Consulta de Comisiones:** Visualización de la lista de alumnos inscriptos en sus materias.
+
+* **Funcionalidades del Estudiante:**
+    * **Autogestión de Inscripciones:** Inscripción a las materias disponibles.
+    * **Consulta de Situación Académica:** Acceso al historial académico personal para verificar materias y notas.
+
+![Casos de Uso](./images/casoDeUsoNuevo.png)
 
 ### **2.3 Caracteristicas de los usuarios** 
 #### 2.3.1 **Usuarios del sistema**
