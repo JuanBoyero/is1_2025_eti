@@ -1,0 +1,65 @@
+classDiagram
+direction TB
+
+class App {
+  +main(String[] args)
+  +init()
+  +login()
+  +createUser()
+  +createProfessor()
+  +createCourse()
+  +assignProfessor()
+}
+
+class DBConfigSingleton {
+  -instance : DBConfigSingleton
+  +getInstance() DBConfigSingleton
+  +connect()
+  +disconnect()
+}
+
+class User {
+  +id : Integer
+  +name : String
+  +email : String
+  +password : String
+  +saveIt()
+  +findFirst()
+  +findAll()
+}
+
+class Professor {
+  +id : Integer
+  +name : String
+  +email : String
+  +dni : String
+  +saveIt()
+  +findFirst()
+  +findAll()
+}
+
+class Course {
+  +id : Integer
+  +name : String
+  +workload : Integer
+  +saveIt()
+  +findFirst()
+  +findAll()
+}
+
+class Dictated {
+  +id : Integer
+  +professorId : Integer
+  +courseId : Integer
+  +saveIt()
+  +findAll()
+}
+
+App --> DBConfigSingleton
+App --> User
+App --> Professor
+App --> Course
+App --> Dictated
+
+Dictated --> Professor
+Dictated --> Course

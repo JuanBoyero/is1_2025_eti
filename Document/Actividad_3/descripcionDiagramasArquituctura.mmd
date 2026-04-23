@@ -1,0 +1,50 @@
+flowchart TB
+    U[Usuario]
+
+    subgraph Presentacion
+        W[Interfaz Web]
+    end
+
+    subgraph Control
+        RC[Routes y Controllers]
+    end
+
+    subgraph Aplicacion
+        AU[Autenticacion]
+        GU[Gestion de Usuarios]
+        GP[Gestion de Profesores]
+        GM[Gestion de Materias]
+        AS[Asignacion Profesor Materia]
+    end
+
+    subgraph Persistencia
+        MU[User Model]
+        MP[Professor Model]
+        MC[Course Model]
+        MD[Dictated Model]
+        CFG[DBConfigSingleton]
+    end
+
+    DB[(SQLite)]
+
+    U --> W
+    W --> RC
+    RC --> AU
+    RC --> GU
+    RC --> GP
+    RC --> GM
+    RC --> AS
+
+    AU --> MU
+    GU --> MU
+    GP --> MP
+    GM --> MC
+    AS --> MP
+    AS --> MC
+    AS --> MD
+
+    MU --> CFG
+    MP --> CFG
+    MC --> CFG
+    MD --> CFG
+    CFG --> DB
