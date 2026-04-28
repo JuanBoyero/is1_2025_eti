@@ -24,6 +24,9 @@ import static spark.Spark.get; // Clase Singleton para la configuración de la b
 import static spark.Spark.halt; // Modelo de ActiveJDBC que representa la tabla 'users'.
 import static spark.Spark.port;
 import static spark.Spark.post;
+import static spark.Spark.exception;
+import static spark.Spark.notFound;
+import static spark.Spark.internalServerError;
 import spark.template.mustache.MustacheTemplateEngine;
 
 
@@ -46,6 +49,44 @@ public class App {
     public static void main(String[] args) {
         port(8080); // Configura el puerto en el que la aplicación Spark escuchará las peticiones
                     // (por defecto es 4567).
+        
+        // --- MANEJO GLOBAL DE ERRORES ---
+        exception(Exception.class, (e, req, res) -> {
+            System.err.println("ERROR GLOBAL NO CONTROLADO: " + e.getMessage());
+            e.printStackTrace();
+
+            //Si hay una conexion vieja se cierra para evitar inconvenientes
+            try {
+                if (Base.hasConnection()) {
+                    Base.close();
+                }
+            } catch (Exception ex) {
+                System.err.println("Error cerrando conexion en handler global: " + ex.getMessage());
+            }
+
+            res.status(500);
+
+            // No pisar respuestas existentes
+            if (res.body() != null && !res.body().isEmpty()) {
+                return;
+            }
+
+            res.type("text/plain");
+            res.body("Error interno del servidor");
+            });
+
+        // Manejo de rutas inexistentes (404)
+        notFound((req, res) -> {
+            res.type("text/plain");
+            return "404 - Pagina no encontrada";
+        });
+
+        // Manejo de error interno (500)
+        internalServerError((req, res) -> {
+            res.type("text/plain");
+            return "500 - Error interno del servidor";
+        });
+        
 
         // Obtener la instancia única del singleton de configuración de la base de
         // datos.
@@ -54,7 +95,12 @@ public class App {
         // --- Filtro 'before' para gestionar la conexión a la base de datos ---
         // Este filtro se ejecuta antes de cada solicitud HTTP.
         before((req, res) -> {
+            //Si hay una conexion vieja se cierra para evitar inconvenientes
             try {
+                if (Base.hasConnection()) {
+                Base.close();
+            }
+
                 // Abre una conexión a la base de datos utilizando las credenciales del
                 // singleton.
                 Base.open(dbConfig.getDriver(), dbConfig.getDbUrl(), dbConfig.getUser(), dbConfig.getPass());
@@ -108,6 +154,12 @@ public class App {
             // Renderiza la plantilla 'user_form.mustache' con los datos del modelo.
             return new ModelAndView(model, "user_form.mustache");
         }, new MustacheTemplateEngine()); // Especifica el motor de plantillas para esta ruta.
+
+        //Ruta de prueba----------------------------------------
+        get("/test-error", (req, res) -> {
+            throw new RuntimeException("Error de prueba");
+        });
+        //--------------------------------------------------
 
         // GET: Ruta para mostrar el dashboard (panel de control) del usuario.
         // Requiere que el usuario esté autenticado.
