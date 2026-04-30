@@ -18,6 +18,14 @@ public class User extends Model {
         return getInteger("id"); //Obtiene el valor de la columna id
     }
 
+    public String getRol(){
+        return getString("role"); //Obtiene el valor de la columna role
+    }
+
+    public void setRol(String role){
+        set("role", role); 
+    }
+
     public String getName() {
         return getString("name"); // Obtiene el valor de la columna 'name'
     }

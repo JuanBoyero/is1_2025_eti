@@ -21,6 +21,14 @@ public class Professor extends Model {
         return getInteger("id"); // Obtiene el valor de la columna id
     }
 
+    public Integer getUserId() {
+        return getInteger("user_id"); 
+    }
+
+    public void setUserId(Integer userId) {
+        set("user_id", userId); 
+    }
+
     public String getName() {
         return getString("name"); // Obtiene el valor de la columna 'name'
     }
