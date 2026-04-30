@@ -1,6 +1,8 @@
-C:\Users\toto\Documents\Universidad\Ingeniería del Software\is1_2025_eti\src\main\java\com\is1\proyecto\models\User.java
-C:\Users\toto\Documents\Universidad\Ingeniería del Software\is1_2025_eti\src\main\java\com\is1\proyecto\config\DBConfigSingleton.java
-C:\Users\toto\Documents\Universidad\Ingeniería del Software\is1_2025_eti\src\main\java\com\is1\proyecto\App.java
-C:\Users\toto\Documents\Universidad\Ingeniería del Software\is1_2025_eti\src\main\java\com\is1\proyecto\models\Dictated.java
-C:\Users\toto\Documents\Universidad\Ingeniería del Software\is1_2025_eti\src\main\java\com\is1\proyecto\models\Course.java
-C:\Users\toto\Documents\Universidad\Ingeniería del Software\is1_2025_eti\src\main\java\com\is1\proyecto\models\Professor.java
+/home/juani/Desktop/Universidad/ingenieria/is1_2025_eti/src/main/java/com/is1/proyecto/models/Enrollment.java
+/home/juani/Desktop/Universidad/ingenieria/is1_2025_eti/src/main/java/com/is1/proyecto/models/Course.java
+/home/juani/Desktop/Universidad/ingenieria/is1_2025_eti/src/main/java/com/is1/proyecto/config/DBConfigSingleton.java
+/home/juani/Desktop/Universidad/ingenieria/is1_2025_eti/src/main/java/com/is1/proyecto/App.java
+/home/juani/Desktop/Universidad/ingenieria/is1_2025_eti/src/main/java/com/is1/proyecto/models/Professor.java
+/home/juani/Desktop/Universidad/ingenieria/is1_2025_eti/src/main/java/com/is1/proyecto/models/Student.java
+/home/juani/Desktop/Universidad/ingenieria/is1_2025_eti/src/main/java/com/is1/proyecto/models/User.java
+/home/juani/Desktop/Universidad/ingenieria/is1_2025_eti/src/main/java/com/is1/proyecto/models/Dictated.java

@@ -32,6 +32,15 @@
                 <input type="password" id="password" name="password" required
                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
+            <div>
+                <label for="role">Selecciona tu rol en SisInfo:</label>
+                <select name="role" id="role" required>
+                    <option value="" disabled selected>-- Elige un rol --</option>
+                    <option value="STUDENT">Alumno</option>
+                    <option value="PROFESSOR">Profesor</option>
+                    <option value="ADMIN">Administrador</option>
+                </select>
+            </div>
             <button type="submit"
                     class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                 Registrar Usuario

@@ -1,6 +1,8 @@
-com\is1\proyecto\App.class
-com\is1\proyecto\models\Professor.class
-com\is1\proyecto\models\User.class
-com\is1\proyecto\models\Dictated.class
-com\is1\proyecto\config\DBConfigSingleton.class
-com\is1\proyecto\models\Course.class
+com/is1/proyecto/models/Course.class
+com/is1/proyecto/App.class
+com/is1/proyecto/models/User.class
+com/is1/proyecto/models/Student.class
+com/is1/proyecto/config/DBConfigSingleton.class
+com/is1/proyecto/models/Professor.class
+com/is1/proyecto/models/Dictated.class
+com/is1/proyecto/models/Enrollment.class
