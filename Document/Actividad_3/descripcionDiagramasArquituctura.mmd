@@ -1,50 +1,44 @@
-flowchart TB
-    U[Usuario]
-
-    subgraph Presentacion
-        W[Interfaz Web]
+flowchart LR
+    subgraph C[Clientes]
+        C1[Cliente]
+        C2[Cliente] 
+        C3[Cliente]
     end
 
-    subgraph Control
-        RC[Routes y Controllers]
+    I[Internet]
+
+    subgraph api[ Servidor]
+        direction TB
+
+        API[API Gateway / Router]
+
+        subgraph fun[Funcionalidad / Capa de Aplicación]
+            direction LR
+            AU[Autenticacion]
+            GU[Gestion de \n Usuarios]
+            GP[Gestion de \n Profesores]
+            GM[Gestion de \n Materias]
+            AS[Asignacion \n Profesor Materia]
+        end 
+
+        subgraph A[Abstraccion / Capa de Datos]
+            direction LR
+            MU[User Model]
+            MP[Professor Model]
+            MC[Course Model]
+            MD[Dictated Model]
+            CFG[DBConfigSingleton]
+        end    
+        
+        DB[(Base de \n Datos: SQLite)]
+        
+        API --> fun
+        fun <--> A
+        A --> DB
     end
 
-    subgraph Aplicacion
-        AU[Autenticacion]
-        GU[Gestion de Usuarios]
-        GP[Gestion de Profesores]
-        GM[Gestion de Materias]
-        AS[Asignacion Profesor Materia]
-    end
+    C1 --> I
+    C2 --> I
+    C3 --> I 
 
-    subgraph Persistencia
-        MU[User Model]
-        MP[Professor Model]
-        MC[Course Model]
-        MD[Dictated Model]
-        CFG[DBConfigSingleton]
-    end
-
-    DB[(SQLite)]
-
-    U --> W
-    W --> RC
-    RC --> AU
-    RC --> GU
-    RC --> GP
-    RC --> GM
-    RC --> AS
-
-    AU --> MU
-    GU --> MU
-    GP --> MP
-    GM --> MC
-    AS --> MP
-    AS --> MC
-    AS --> MD
-
-    MU --> CFG
-    MP --> CFG
-    MC --> CFG
-    MD --> CFG
-    CFG --> DB
+    I -->API
