@@ -20,13 +20,13 @@ import com.is1.proyecto.models.User; // Para crear mapas de datos (modelos para 
 import spark.ModelAndView; // Modelo de ActiveJDBC que representa la tabla 'Professor'.
 import static spark.Spark.after; // Para crear mapas de datos (modelos para las plantillas).
 import static spark.Spark.before; // Interfaz Map, utilizada para Map.of() o HashMap.
-import static spark.Spark.get; // Clase Singleton para la configuración de la base de datos.
-import static spark.Spark.halt; // Modelo de ActiveJDBC que representa la tabla 'users'.
+import static spark.Spark.exception; // Clase Singleton para la configuración de la base de datos.
+import static spark.Spark.get; // Modelo de ActiveJDBC que representa la tabla 'users'.
+import static spark.Spark.halt;
+import static spark.Spark.internalServerError;
+import static spark.Spark.notFound;
 import static spark.Spark.port;
 import static spark.Spark.post;
-import static spark.Spark.exception;
-import static spark.Spark.notFound;
-import static spark.Spark.internalServerError;
 import spark.template.mustache.MustacheTemplateEngine;
 
 
