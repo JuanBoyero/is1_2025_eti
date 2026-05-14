@@ -629,5 +629,5 @@ public class App {
             }
         });
     } // Fin del método main
-    //Comentario prueba
+    //Comentario prueba 2
 } // Fin de la clase App
