@@ -1,0 +1,1 @@
+OpenCode ya funciona.
