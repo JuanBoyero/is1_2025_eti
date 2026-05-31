@@ -27,6 +27,7 @@ import static spark.Spark.post;
 import static spark.Spark.exception;
 import static spark.Spark.notFound;
 import static spark.Spark.internalServerError;
+import static spark.Spark.staticFileLocation;
 import spark.template.mustache.MustacheTemplateEngine;
 
 
@@ -49,6 +50,7 @@ public class App {
     public static void main(String[] args) {
         port(8080); // Configura el puerto en el que la aplicación Spark escuchará las peticiones
                     // (por defecto es 4567).
+        staticFileLocation("/public"); // Sirve archivos estáticos desde src/main/resources/public
         
         // --- MANEJO GLOBAL DE ERRORES ---
         exception(Exception.class, (e, req, res) -> {
@@ -123,7 +125,7 @@ public class App {
             if (rol == null || !rol.equals("ADMIN")) {
                 System.out.println("DEBUG: Intento de acceso denegado a ruta ADMIN");
                 res.redirect("/login?error=Acceso denegado. Permisos de Administrador requeridos.");
-                halt(401);
+                halt();
             }
         });
 
@@ -131,7 +133,7 @@ public class App {
             String rol = req.session().attribute("user_role");
             if (rol == null || !rol.equals("PROFESSOR")) {
                 res.redirect("/login?error=Acceso denegado. Área exclusiva para profesores.");
-                halt(401);
+                halt();
             }
         });
 
@@ -139,7 +141,7 @@ public class App {
             String rol = req.session().attribute("user_role");
             if (rol == null || !rol.equals("STUDENT")) {
                 res.redirect("/login?error=Acceso denegado. Área exclusiva para alumnos.");
-                halt(401);
+                halt();
             }
         });
 
@@ -148,7 +150,9 @@ public class App {
         after((req, res) -> {
             try {
                 // Cierra la conexión a la base de datos para liberar recursos.
-                Base.close();
+                if (Base.hasConnection()) {
+                    Base.close();
+                }
                 
             } catch (Exception e) {
                 // Si ocurre un error al cerrar la conexión, se registra.
@@ -197,6 +201,142 @@ public class App {
             model.put("username", req.session().attribute("currentUserUsername"));
             return new ModelAndView(model, "dashboard_admin.mustache");
         }, new MustacheTemplateEngine());
+
+        // --- ADMIN: Gestión de Usuarios (ABM) ---
+
+        // GET: Listar todos los usuarios del sistema
+        get("/admin/users", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+            model.put("username", req.session().attribute("currentUserUsername"));
+            List<User> userList = User.findAll().orderBy("id ASC");
+            List<Map<String, Object>> displayUsers = new java.util.ArrayList<>();
+            Integer currentUserId = req.session().attribute("userId");
+            for (User u : userList) {
+                Map<String, Object> item = new HashMap<>();
+                item.put("id", u.getId());
+                item.put("name", u.getString("name"));
+                item.put("role", u.getString("role"));
+                item.put("isAdmin", "ADMIN".equals(u.getString("role")));
+                item.put("isProfessor", "PROFESSOR".equals(u.getString("role")));
+                item.put("isStudent", "STUDENT".equals(u.getString("role")));
+                item.put("isSelf", currentUserId != null && currentUserId.equals(u.getId()));
+                displayUsers.add(item);
+            }
+            model.put("users", displayUsers);
+
+            String successMessage = req.queryParams("message");
+            if (successMessage != null && !successMessage.isEmpty()) {
+                model.put("successMessage", successMessage);
+            }
+
+            String errorMessage = req.queryParams("error");
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                model.put("errorMessage", errorMessage);
+            }
+
+            return new ModelAndView(model, "admin_users_list.mustache");
+        }, new MustacheTemplateEngine());
+
+        // GET: Formulario para editar un usuario
+        get("/admin/users/edit/:id", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+            String idParam = req.params(":id");
+
+            User user = User.findById(Integer.parseInt(idParam));
+            if (user == null) {
+                res.redirect("/admin/users?error=Usuario no encontrado.");
+                return null;
+            }
+
+            model.put("user", user);
+            model.put("userId", user.getId());
+            model.put("userName", user.getString("name"));
+            model.put("userRole", user.getString("role"));
+            model.put("isAdmin", "ADMIN".equals(user.getString("role")));
+            model.put("isProfessor", "PROFESSOR".equals(user.getString("role")));
+            model.put("isStudent", "STUDENT".equals(user.getString("role")));
+
+            String successMessage = req.queryParams("message");
+            if (successMessage != null && !successMessage.isEmpty()) {
+                model.put("successMessage", successMessage);
+            }
+
+            String errorMessage = req.queryParams("error");
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                model.put("errorMessage", errorMessage);
+            }
+
+            return new ModelAndView(model, "admin_user_edit.mustache");
+        }, new MustacheTemplateEngine());
+
+        // POST: Guardar cambios de un usuario editado
+        post("/admin/users/edit/:id", (req, res) -> {
+            String idParam = req.params(":id");
+
+            String name = req.queryParams("name");
+            String password = req.queryParams("password");
+            String role = req.queryParams("role");
+
+            if (name == null || name.isEmpty() || role == null || role.isEmpty()) {
+                res.redirect("/admin/users/edit/" + idParam + "?error=Nombre y rol son obligatorios.");
+                return "";
+            }
+
+            if (!role.matches("ADMIN|PROFESSOR|STUDENT")) {
+                res.redirect("/admin/users/edit/" + idParam + "?error=Rol inválido.");
+                return "";
+            }
+
+            try {
+                User user = User.findById(Integer.parseInt(idParam));
+                if (user == null) {
+                    res.redirect("/admin/users?error=Usuario no encontrado.");
+                    return "";
+                }
+
+                user.set("name", name);
+                if (password != null && !password.isEmpty()) {
+                    String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+                    user.set("password", hashedPassword);
+                }
+                user.set("role", role);
+                user.saveIt();
+
+                res.redirect("/admin/users?message=Usuario '" + name + "' actualizado exitosamente.");
+                return "";
+
+            } catch (Exception e) {
+                System.err.println("Error al actualizar usuario: " + e.getMessage());
+                e.printStackTrace();
+                res.redirect("/admin/users/edit/" + idParam + "?error=Error interno al actualizar el usuario.");
+                return "";
+            }
+        });
+
+        // POST: Eliminar un usuario
+        post("/admin/users/delete/:id", (req, res) -> {
+            String idParam = req.params(":id");
+
+            try {
+                User user = User.findById(Integer.parseInt(idParam));
+                if (user == null) {
+                    res.redirect("/admin/users?error=Usuario no encontrado.");
+                    return "";
+                }
+
+                String userName = user.getString("name");
+                user.delete();
+
+                res.redirect("/admin/users?message=Usuario '" + userName + "' eliminado exitosamente.");
+                return "";
+
+            } catch (Exception e) {
+                System.err.println("Error al eliminar usuario: " + e.getMessage());
+                e.printStackTrace();
+                res.redirect("/admin/users?error=Error interno al eliminar el usuario.");
+                return "";
+            }
+        });
 
         // Dashboard PROFESOR
         get("/profesor/dashboard", (req, res) -> {
@@ -321,6 +461,12 @@ public class App {
         
             String storedHashedPassword = ac.getString("password");
         
+            if (storedHashedPassword == null) {
+                res.status(401);
+                model.put("errorMessage", "Usuario o contraseña incorrectos.");
+                return new ModelAndView(model, "login.mustache");
+            }
+
             // Validar Contraseña
             if (BCrypt.checkpw(plainTextPassword, storedHashedPassword)) {
                 res.status(200); 
@@ -383,7 +529,8 @@ public class App {
                 // Se recomienda usar `BCrypt.hashpw(password, BCrypt.gensalt())` como en la
                 // ruta '/user/new').
                 newUser.set("name", name); // Asigna el nombre al campo 'name'.
-                newUser.set("password", password); // Asigna la contraseña al campo 'password'.
+                String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+                newUser.set("password", hashedPassword); // Asigna la contraseña hasheada al campo 'password'.
                 newUser.saveIt(); // Guarda el nuevo usuario en la tabla 'users'.
 
                 res.status(201); // Created.

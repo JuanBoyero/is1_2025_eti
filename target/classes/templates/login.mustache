@@ -4,10 +4,45 @@
     <meta charset="UTF-8">
     <title>Iniciar Sesión</title>
     <script src="https://cdn.tailwindcss.com"></script>
+<!-- --------------Movimiento del fondo--------------------------- -->
+    <style>
+    @keyframes gradientMove {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    .animated-bg {
+        background-size: 400% 400%;
+        animation: gradientMove 12s ease infinite;
+    }
+    </style>
+<!-- -------------Esconder/Mostrar Contraseña--------------------- -->
+    <script>
+    function togglePassword() {
+
+        const passwordInput = document.getElementById("password");
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+        } else {
+            passwordInput.type = "password";
+        }
+    }
+    </script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Iniciar Sesión</h1>
+<body class="animated-bg bg-gradient-to-br from-green-100 via-green-200 to-cyan-300 flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">
+
+        <h1 class="text-4xl font-extrabold text-center text-gray-800 mb-2">¡Bienvenido!</h1>
+
+        <h1 class="text-2xl font-semibold text-center text-gray-500 mb-6">Iniciar Sesión</h1>
 
         {{#successMessage}}
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
@@ -26,11 +61,34 @@
                 <label for="username" class="block text-gray-700 text-sm font-medium mb-1">Nombre de Usuario:</label>
                 <input type="text" id="username" name="username" required
                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-            </div>
-            <div>
-                <label for="password" class="block text-gray-700 text-sm font-medium mb-1">Contraseña:</label>
-                <input type="password" id="password" name="password" required
-                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>  
+                <div>
+                <label for="password" class="block text-gray-700 text-sm font-medium mb-1">
+                    Contraseña:
+                </label>
+
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+
+                <div class="flex items-center mt-2">
+
+                    <input 
+                        type="checkbox"
+                        id="showPassword"
+                        onclick="togglePassword()"
+                        class="mr-2"
+                    >
+
+                    <label for="showPassword" class="text-sm text-gray-600">
+                        Mostrar contraseña
+                    </label>
+
+                </div>
             </div>
             <button type="submit"
                     class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
@@ -44,7 +102,5 @@
             </div>
         </form>
     </div>
-</body>
-</html>
 </body>
 </html>
