@@ -383,7 +383,7 @@ public class App {
             
                 // --- Gestión de Sesión ---
                 req.session(true).attribute("currentUserUsername", username);
-                req.session().attribute("userId", ac.getId()); 
+                req.session().attribute("userId", ac.getLong("id")); 
                 req.session().attribute("loggedIn", true);
 
                 // ¡NUEVO! Guardamos el rol en la sesión
