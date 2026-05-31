@@ -1,6 +1,7 @@
 package com.is1.proyecto; // Define el paquete de la aplicación, debe coincidir con la estructura de carpetas.
 
 // Importaciones necesarias para la aplicación Spark
+import java.util.ArrayList;
 import java.util.HashMap; // Utilidad para serializar/deserializar objetos Java a/desde JSON.
 import java.util.List;
 import java.util.Map; // Importa los métodos estáticos principales de Spark (get, post, before, after, etc.).
@@ -14,7 +15,9 @@ import com.fasterxml.jackson.databind.ObjectMapper; // Representa un modelo de d
 import com.is1.proyecto.config.DBConfigSingleton; // Motor de plantillas Mustache para Spark.
 import com.is1.proyecto.models.Course;
 import com.is1.proyecto.models.Dictated;
+import com.is1.proyecto.models.Enrollment;
 import com.is1.proyecto.models.Professor; // Modelo de ActiveJDBC que representa la tabla 'Professor'. 
+import com.is1.proyecto.models.Student;
 import com.is1.proyecto.models.User; // Para crear mapas de datos (modelos para las plantillas).
 
 import spark.ModelAndView; // Modelo de ActiveJDBC que representa la tabla 'Professor'.
@@ -195,6 +198,13 @@ public class App {
         get("/admin/dashboard", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
             model.put("username", req.session().attribute("currentUserUsername"));
+
+            // Estadisticas del sistema
+            model.put("totalUsers", User.count());
+            model.put("totalProfessors", Professor.count());
+            model.put("totalStudents", Student.count());
+            model.put("totalCourses", Course.count());
+
             return new ModelAndView(model, "dashboard_admin.mustache");
         }, new MustacheTemplateEngine());
 
@@ -203,8 +213,29 @@ public class App {
             Map<String, Object> model = new HashMap<>();
             model.put("username", req.session().attribute("currentUserUsername"));
 
-            // (Opcional a futuro) Acá podés buscar materias de ESTE profesor específico
-            // Professor prof = Professor.findFirst("user_id = ?", req.session().attribute("userId"));
+            Long userId = req.session().attribute("userId");
+            Professor prof = Professor.findFirst("user_id = ?", userId);
+            if (prof != null) {
+                model.put("professorName", prof.get("name"));
+                model.put("professorSurname", prof.get("surname"));
+                model.put("professorEmail", prof.get("email"));
+                model.put("professorDni", prof.get("dni"));
+
+                List<Dictated> dictatedList = Dictated.where("idProfessor = ?", prof.getLongId());
+                if (dictatedList != null && !dictatedList.isEmpty()) {
+                    List<Map<String, Object>> courses = new ArrayList<>();
+                    for (Dictated d : dictatedList) {
+                        Course course = Course.findById(d.getLong("idCourse"));
+                        if (course != null) {
+                            Map<String, Object> courseMap = new HashMap<>();
+                            courseMap.put("name", course.get("name"));
+                            courseMap.put("courseLoad", course.get("courseLoad"));
+                            courses.add(courseMap);
+                        }
+                    }
+                    model.put("courses", courses);
+                }
+            }
 
             return new ModelAndView(model, "dashboard_profesor.mustache");
         }, new MustacheTemplateEngine());
@@ -213,6 +244,31 @@ public class App {
         get("/alumno/dashboard", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
             model.put("username", req.session().attribute("currentUserUsername"));
+
+            Long userId = req.session().attribute("userId");
+            Student student = Student.findFirst("user_id = ?", userId);
+            if (student != null) {
+                model.put("studentName", student.get("name"));
+                model.put("studentSurname", student.get("surname"));
+                model.put("studentEmail", student.get("email"));
+                model.put("studentDni", student.get("dni"));
+
+                List<Enrollment> enrollmentList = Enrollment.where("idStudent = ?", student.getLongId());
+                if (enrollmentList != null && !enrollmentList.isEmpty()) {
+                    List<Map<String, Object>> courses = new ArrayList<>();
+                    for (Enrollment e : enrollmentList) {
+                        Course course = Course.findById(e.getLong("idCourse"));
+                        if (course != null) {
+                            Map<String, Object> courseMap = new HashMap<>();
+                            courseMap.put("name", course.get("name"));
+                            courseMap.put("courseLoad", course.get("courseLoad"));
+                            courses.add(courseMap);
+                        }
+                    }
+                    model.put("courses", courses);
+                }
+            }
+
             return new ModelAndView(model, "dashboard_alumno.mustache");
         }, new MustacheTemplateEngine());
 
