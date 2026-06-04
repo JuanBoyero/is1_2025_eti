@@ -44,6 +44,8 @@ DROP TABLE IF EXISTS course;
 CREATE TABLE course (
     id INTEGER PRIMARY KEY AUTOINCREMENT, -- Codigo de la materia Clave primaria autoincremental para SQLite
     name TEXT NOT NULL, -- nombre de la materia (TEXT es el tipo de cadena recomendado para SQLite)
+    code TEXT NOT NULL UNIQUE, -- Codigo identificador de la materia (ej: IS1, MAT101)
+    year INTEGER, -- Año/Nivel de la materia (ej: 1, 2, 3, 4, 5)
     courseLoad INTEGER -- Carga Horaria
 );
 
