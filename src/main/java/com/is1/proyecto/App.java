@@ -205,6 +205,16 @@ public class App {
             model.put("totalStudents", Student.count());
             model.put("totalCourses", Course.count());
 
+            String successMessage = req.queryParams("message");
+            if (successMessage != null && !successMessage.isEmpty()) {
+                model.put("successMessage", successMessage);
+            }
+
+            String errorMessage = req.queryParams("error");
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                model.put("errorMessage", errorMessage);
+            }
+
             return new ModelAndView(model, "dashboard_admin.mustache");
         }, new MustacheTemplateEngine());
 
@@ -709,13 +719,245 @@ public class App {
 
                 res.status(201);
                 res.redirect(
-                        "/coursed/create?message=Materia '" + name.trim() + "' (" + code.trim().toUpperCase() + ") registrada exitosamente.");
+                        "/admin/dashboard?message=Materia '" + name.trim() + "' (" + code.trim().toUpperCase() + ") registrada exitosamente.");
                 return "";
             } catch (Exception e) {
                 System.err.println("Error al registrar materia: " + e.getMessage());
                 e.printStackTrace();
                 res.status(500);
                 res.redirect("/coursed/create?error=Error interno al registrar la materia. Intente de nuevo.");
+                return "";
+            }
+        });
+        // --- RUTAS ABM DE MATERIAS (SOLO ADMIN) ---
+
+        // GET: Listado de materias
+        get("/admin/courses", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+
+            List<Course> courses = Course.findAll().orderBy("name ASC");
+            model.put("courses", courses);
+
+            String successMessage = req.queryParams("message");
+            if (successMessage != null && !successMessage.isEmpty()) {
+                model.put("successMessage", successMessage);
+            }
+
+            String errorMessage = req.queryParams("error");
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                model.put("errorMessage", errorMessage);
+            }
+
+            return new ModelAndView(model, "courses_list.mustache");
+        }, new MustacheTemplateEngine());
+
+        // GET: Formulario para editar materia
+        get("/admin/courses/:id/edit", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+
+            String idStr = req.params(":id");
+            if (idStr == null || idStr.isEmpty()) {
+                res.redirect("/admin/courses?error=ID de materia no especificado.");
+                return null;
+            }
+
+            try {
+                Long id = Long.parseLong(idStr);
+                Course course = Course.findById(id);
+                if (course == null) {
+                    res.redirect("/admin/courses?error=Materia no encontrada.");
+                    return null;
+                }
+
+                model.put("course", course);
+
+                // Pre-seleccionar el año en el dropdown
+                Integer year = course.getInteger("year");
+                if (year != null) {
+                    model.put("selectedYear" + year, true);
+                }
+
+                String successMessage = req.queryParams("message");
+                if (successMessage != null && !successMessage.isEmpty()) {
+                    model.put("successMessage", successMessage);
+                }
+
+                String errorMessage = req.queryParams("error");
+                if (errorMessage != null && !errorMessage.isEmpty()) {
+                    model.put("errorMessage", errorMessage);
+                }
+
+                return new ModelAndView(model, "coursed_edit_form.mustache");
+            } catch (NumberFormatException e) {
+                res.redirect("/admin/courses?error=ID de materia invalido.");
+                return null;
+            }
+        }, new MustacheTemplateEngine());
+
+        // POST: Actualizar materia
+        post("/admin/courses/:id/edit", (req, res) -> {
+            String idStr = req.params(":id");
+
+            if (idStr == null || idStr.isEmpty()) {
+                res.status(400);
+                res.redirect("/admin/courses?error=ID de materia no especificado.");
+                return "";
+            }
+
+            try {
+                Long id = Long.parseLong(idStr);
+                Course course = Course.findById(id);
+                if (course == null) {
+                    res.status(404);
+                    res.redirect("/admin/courses?error=Materia no encontrada.");
+                    return "";
+                }
+
+                String name = req.queryParams("name");
+                String code = req.queryParams("code");
+                String yearStr = req.queryParams("year");
+                String courseLoadStr = req.queryParams("courseLoad");
+
+                if (name == null || name.trim().isEmpty()) {
+                    res.status(400);
+                    res.redirect("/admin/courses/" + id + "/edit?error=El campo Nombre de la Materia es OBLIGATORIO.");
+                    return "";
+                }
+
+                if (code == null || code.trim().isEmpty()) {
+                    res.status(400);
+                    res.redirect("/admin/courses/" + id + "/edit?error=El campo Codigo es OBLIGATORIO.");
+                    return "";
+                }
+
+                if (yearStr == null || yearStr.trim().isEmpty()) {
+                    res.status(400);
+                    res.redirect("/admin/courses/" + id + "/edit?error=El campo Ano/Nivel es OBLIGATORIO.");
+                    return "";
+                }
+
+                if (courseLoadStr == null || courseLoadStr.trim().isEmpty()) {
+                    res.status(400);
+                    res.redirect("/admin/courses/" + id + "/edit?error=El campo Carga Horaria es OBLIGATORIO.");
+                    return "";
+                }
+
+                int courseLoad;
+                try {
+                    courseLoad = Integer.parseInt(courseLoadStr.trim());
+                    if (courseLoad <= 0) {
+                        res.status(400);
+                        res.redirect("/admin/courses/" + id + "/edit?error=La Carga Horaria debe ser un numero entero positivo.");
+                        return "";
+                    }
+                } catch (NumberFormatException e) {
+                    res.status(400);
+                    res.redirect("/admin/courses/" + id + "/edit?error=La Carga Horaria debe ser un numero entero valido.");
+                    return "";
+                }
+
+                int year;
+                try {
+                    year = Integer.parseInt(yearStr.trim());
+                    if (year < 1 || year > 5) {
+                        res.status(400);
+                        res.redirect("/admin/courses/" + id + "/edit?error=El Ano/Nivel debe estar entre 1 y 5.");
+                        return "";
+                    }
+                } catch (NumberFormatException e) {
+                    res.status(400);
+                    res.redirect("/admin/courses/" + id + "/edit?error=El Ano/Nivel debe ser un numero entero valido.");
+                    return "";
+                }
+
+                // Verificar duplicados (excluyendo la materia actual)
+                Course existingByName = Course.findFirst("name = ? AND id != ?", name.trim(), id);
+                if (existingByName != null) {
+                    res.status(400);
+                    res.redirect("/admin/courses/" + id + "/edit?error=El nombre de la materia ya existe en el sistema.");
+                    return "";
+                }
+
+                Course existingByCode = Course.findFirst("code = ? AND id != ?", code.trim().toUpperCase(), id);
+                if (existingByCode != null) {
+                    res.status(400);
+                    res.redirect("/admin/courses/" + id + "/edit?error=El codigo de la materia ya existe en el sistema.");
+                    return "";
+                }
+
+                course.set("name", name.trim());
+                course.set("code", code.trim().toUpperCase());
+                course.set("year", year);
+                course.set("courseLoad", courseLoad);
+                course.saveIt();
+
+                res.status(200);
+                res.redirect("/admin/dashboard?message=Materia '" + name.trim() + "' actualizada exitosamente.");
+                return "";
+            } catch (NumberFormatException e) {
+                res.status(400);
+                res.redirect("/admin/courses?error=ID de materia invalido.");
+                return "";
+            } catch (Exception e) {
+                System.err.println("Error al actualizar materia: " + e.getMessage());
+                e.printStackTrace();
+                res.status(500);
+                res.redirect("/admin/courses/" + idStr + "/edit?error=Error interno al actualizar la materia.");
+                return "";
+            }
+        });
+
+        // POST: Eliminar materia
+        post("/admin/courses/:id/delete", (req, res) -> {
+            String idStr = req.params(":id");
+
+            if (idStr == null || idStr.isEmpty()) {
+                res.status(400);
+                res.redirect("/admin/courses?error=ID de materia no especificado.");
+                return "";
+            }
+
+            try {
+                Long id = Long.parseLong(idStr);
+                Course course = Course.findById(id);
+                if (course == null) {
+                    res.status(404);
+                    res.redirect("/admin/courses?error=Materia no encontrada.");
+                    return "";
+                }
+
+                String courseName = course.getString("name");
+
+                // Verificar si hay dictados asociados
+                List<Dictated> dictatedList = Dictated.where("idCourse = ?", id);
+                if (dictatedList != null && !dictatedList.isEmpty()) {
+                    res.status(400);
+                    res.redirect("/admin/courses?error=No se puede eliminar la materia porque tiene profesores asignados. Elimine las asignaciones primero.");
+                    return "";
+                }
+
+                // Verificar si hay inscripciones asociadas
+                List<Enrollment> enrollmentList = Enrollment.where("idCourse = ?", id);
+                if (enrollmentList != null && !enrollmentList.isEmpty()) {
+                    res.status(400);
+                    res.redirect("/admin/courses?error=No se puede eliminar la materia porque tiene alumnos inscriptos. Elimine las inscripciones primero.");
+                    return "";
+                }
+
+                course.delete();
+
+                res.status(200);
+                res.redirect("/admin/dashboard?message=Materia '" + courseName + "' eliminada exitosamente.");
+                return "";
+            } catch (NumberFormatException e) {
+                res.status(400);
+                res.redirect("/admin/courses?error=ID de materia invalido.");
+                return "";
+            } catch (Exception e) {
+                System.err.println("Error al eliminar materia: " + e.getMessage());
+                e.printStackTrace();
+                res.status(500);
+                res.redirect("/admin/courses?error=Error interno al eliminar la materia.");
                 return "";
             }
         });
