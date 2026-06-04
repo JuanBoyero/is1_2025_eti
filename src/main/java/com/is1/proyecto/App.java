@@ -627,9 +627,10 @@ public class App {
 
         // POST: Maneja el envío del formulario para crear una nueva materia.
         post("/coursed/new", (req, res) -> {
-            
-            //Verificacion de los datos de la materia a cargar 
+
             String name = req.queryParams("name");
+            String code = req.queryParams("code");
+            String yearStr = req.queryParams("year");
             String courseLoadStr = req.queryParams("courseLoad");
 
             if (name == null || name.trim().isEmpty()) {
@@ -637,13 +638,25 @@ public class App {
                 res.redirect("/coursed/create?error=El campo Nombre de la Materia es OBLIGATORIO.");
                 return "";
             }
-            
+
+            if (code == null || code.trim().isEmpty()) {
+                res.status(400);
+                res.redirect("/coursed/create?error=El campo Código es OBLIGATORIO.");
+                return "";
+            }
+
+            if (yearStr == null || yearStr.trim().isEmpty()) {
+                res.status(400);
+                res.redirect("/coursed/create?error=El campo Año/Nivel es OBLIGATORIO.");
+                return "";
+            }
+
             if (courseLoadStr == null || courseLoadStr.trim().isEmpty()) {
                 res.status(400);
                 res.redirect("/coursed/create?error=El campo Carga Horaria es OBLIGATORIO.");
                 return "";
             }
-            
+
             int courseLoad;
             try {
                 courseLoad = Integer.parseInt(courseLoadStr.trim());
@@ -658,24 +671,46 @@ public class App {
                 return "";
             }
 
+            int year;
             try {
-                Course existingCourse = Course.findFirst("name = ?", name.trim());
-                if (existingCourse != null) {
+                year = Integer.parseInt(yearStr.trim());
+                if (year < 1 || year > 5) {
+                    res.status(400);
+                    res.redirect("/coursed/create?error=El Año/Nivel debe estar entre 1 y 5.");
+                    return "";
+                }
+            } catch (NumberFormatException e) {
+                res.status(400);
+                res.redirect("/coursed/create?error=El Año/Nivel debe ser un número entero válido.");
+                return "";
+            }
+
+            try {
+                Course existingByName = Course.findFirst("name = ?", name.trim());
+                if (existingByName != null) {
                     res.status(400);
                     res.redirect("/coursed/create?error=El nombre de la materia ya existe en el sistema.");
                     return "";
-                }else{
-                   //Crear y guardar la materia
+                }
+
+                Course existingByCode = Course.findFirst("code = ?", code.trim().toUpperCase());
+                if (existingByCode != null) {
+                    res.status(400);
+                    res.redirect("/coursed/create?error=El código de la materia ya existe en el sistema.");
+                    return "";
+                }
+
                 Course newCourse = new Course();
                 newCourse.set("name", name.trim());
+                newCourse.set("code", code.trim().toUpperCase());
+                newCourse.set("year", year);
                 newCourse.set("courseLoad", courseLoad);
                 newCourse.saveIt();
 
                 res.status(201);
                 res.redirect(
-                        "/coursed/create?message=Materia '" + name.trim() + "' registrada exitosamente.");
-                return ""; 
-                }
+                        "/coursed/create?message=Materia '" + name.trim() + "' (" + code.trim().toUpperCase() + ") registrada exitosamente.");
+                return "";
             } catch (Exception e) {
                 System.err.println("Error al registrar materia: " + e.getMessage());
                 e.printStackTrace();
