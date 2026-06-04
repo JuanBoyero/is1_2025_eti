@@ -1,6 +1,7 @@
 package com.is1.proyecto; // Define el paquete de la aplicación, debe coincidir con la estructura de carpetas.
 
 // Importaciones necesarias para la aplicación Spark
+import java.util.ArrayList;
 import java.util.HashMap; // Utilidad para serializar/deserializar objetos Java a/desde JSON.
 import java.util.List;
 import java.util.Map; // Importa los métodos estáticos principales de Spark (get, post, before, after, etc.).
@@ -14,7 +15,9 @@ import com.fasterxml.jackson.databind.ObjectMapper; // Representa un modelo de d
 import com.is1.proyecto.config.DBConfigSingleton; // Motor de plantillas Mustache para Spark.
 import com.is1.proyecto.models.Course;
 import com.is1.proyecto.models.Dictated;
+import com.is1.proyecto.models.Enrollment;
 import com.is1.proyecto.models.Professor; // Modelo de ActiveJDBC que representa la tabla 'Professor'. 
+import com.is1.proyecto.models.Student;
 import com.is1.proyecto.models.User; // Para crear mapas de datos (modelos para las plantillas).
 
 import spark.ModelAndView; // Modelo de ActiveJDBC que representa la tabla 'Professor'.
@@ -195,6 +198,13 @@ public class App {
         get("/admin/dashboard", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
             model.put("username", req.session().attribute("currentUserUsername"));
+
+            // Estadisticas del sistema
+            model.put("totalUsers", User.count());
+            model.put("totalProfessors", Professor.count());
+            model.put("totalStudents", Student.count());
+            model.put("totalCourses", Course.count());
+
             return new ModelAndView(model, "dashboard_admin.mustache");
         }, new MustacheTemplateEngine());
 
@@ -203,8 +213,29 @@ public class App {
             Map<String, Object> model = new HashMap<>();
             model.put("username", req.session().attribute("currentUserUsername"));
 
-            // (Opcional a futuro) Acá podés buscar materias de ESTE profesor específico
-            // Professor prof = Professor.findFirst("user_id = ?", req.session().attribute("userId"));
+            Long userId = req.session().attribute("userId");
+            Professor prof = Professor.findFirst("user_id = ?", userId);
+            if (prof != null) {
+                model.put("professorName", prof.get("name"));
+                model.put("professorSurname", prof.get("surname"));
+                model.put("professorEmail", prof.get("email"));
+                model.put("professorDni", prof.get("dni"));
+
+                List<Dictated> dictatedList = Dictated.where("idProfessor = ?", prof.getLongId());
+                if (dictatedList != null && !dictatedList.isEmpty()) {
+                    List<Map<String, Object>> courses = new ArrayList<>();
+                    for (Dictated d : dictatedList) {
+                        Course course = Course.findById(d.getLong("idCourse"));
+                        if (course != null) {
+                            Map<String, Object> courseMap = new HashMap<>();
+                            courseMap.put("name", course.get("name"));
+                            courseMap.put("courseLoad", course.get("courseLoad"));
+                            courses.add(courseMap);
+                        }
+                    }
+                    model.put("courses", courses);
+                }
+            }
 
             return new ModelAndView(model, "dashboard_profesor.mustache");
         }, new MustacheTemplateEngine());
@@ -213,6 +244,31 @@ public class App {
         get("/alumno/dashboard", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
             model.put("username", req.session().attribute("currentUserUsername"));
+
+            Long userId = req.session().attribute("userId");
+            Student student = Student.findFirst("user_id = ?", userId);
+            if (student != null) {
+                model.put("studentName", student.get("name"));
+                model.put("studentSurname", student.get("surname"));
+                model.put("studentEmail", student.get("email"));
+                model.put("studentDni", student.get("dni"));
+
+                List<Enrollment> enrollmentList = Enrollment.where("idStudent = ?", student.getLongId());
+                if (enrollmentList != null && !enrollmentList.isEmpty()) {
+                    List<Map<String, Object>> courses = new ArrayList<>();
+                    for (Enrollment e : enrollmentList) {
+                        Course course = Course.findById(e.getLong("idCourse"));
+                        if (course != null) {
+                            Map<String, Object> courseMap = new HashMap<>();
+                            courseMap.put("name", course.get("name"));
+                            courseMap.put("courseLoad", course.get("courseLoad"));
+                            courses.add(courseMap);
+                        }
+                    }
+                    model.put("courses", courses);
+                }
+            }
+
             return new ModelAndView(model, "dashboard_alumno.mustache");
         }, new MustacheTemplateEngine());
 
@@ -327,7 +383,7 @@ public class App {
             
                 // --- Gestión de Sesión ---
                 req.session(true).attribute("currentUserUsername", username);
-                req.session().attribute("userId", ac.getId()); 
+                req.session().attribute("userId", ac.getLong("id")); 
                 req.session().attribute("loggedIn", true);
 
                 // ¡NUEVO! Guardamos el rol en la sesión
@@ -628,6 +684,226 @@ public class App {
                 return "";
             }
         });
+        // --- RUTAS ABM DE USUARIOS (SOLO ADMIN) ---
+
+        // GET: Listado de usuarios
+        get("/admin/users", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+
+            List<User> users = User.findAll().orderBy("name ASC");
+            model.put("users", users);
+
+            String successMessage = req.queryParams("message");
+            if (successMessage != null && !successMessage.isEmpty()) {
+                model.put("successMessage", successMessage);
+            }
+
+            String errorMessage = req.queryParams("error");
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                model.put("errorMessage", errorMessage);
+            }
+
+            return new ModelAndView(model, "users_list.mustache");
+        }, new MustacheTemplateEngine());
+
+        // GET: Formulario para crear usuario (admin)
+        get("/admin/users/create", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+
+            String successMessage = req.queryParams("message");
+            if (successMessage != null && !successMessage.isEmpty()) {
+                model.put("successMessage", successMessage);
+            }
+
+            String errorMessage = req.queryParams("error");
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                model.put("errorMessage", errorMessage);
+            }
+
+            return new ModelAndView(model, "user_form.mustache");
+        }, new MustacheTemplateEngine());
+
+        // POST: Crear usuario (admin)
+        post("/admin/users/create", (req, res) -> {
+            String name = req.queryParams("name");
+            String password = req.queryParams("password");
+            String role = req.queryParams("role");
+
+            if (name == null || name.trim().isEmpty() || password == null || password.trim().isEmpty() || role == null || role.trim().isEmpty()) {
+                res.status(400);
+                res.redirect("/admin/users/create?error=Nombre, contraseña y rol son requeridos.");
+                return "";
+            }
+
+            try {
+                User existing = User.findFirst("name = ?", name.trim());
+                if (existing != null) {
+                    res.status(400);
+                    res.redirect("/admin/users/create?error=El nombre de usuario ya existe.");
+                    return "";
+                }
+
+                User user = new User();
+                user.set("name", name.trim());
+                user.set("password", BCrypt.hashpw(password, BCrypt.gensalt()));
+                user.set("role", role);
+                user.saveIt();
+
+                res.status(201);
+                res.redirect("/admin/users?message=Usuario " + name.trim() + " creado exitosamente.");
+                return "";
+            } catch (Exception e) {
+                System.err.println("Error al crear usuario: " + e.getMessage());
+                e.printStackTrace();
+                res.status(500);
+                res.redirect("/admin/users/create?error=Error interno al crear el usuario.");
+                return "";
+            }
+        });
+
+        // GET: Formulario para editar usuario
+        get("/admin/users/:id/edit", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+
+            String idStr = req.params(":id");
+            if (idStr == null || idStr.isEmpty()) {
+                res.redirect("/admin/users?error=ID de usuario no especificado.");
+                return null;
+            }
+
+            try {
+                Long id = Long.parseLong(idStr);
+                User user = User.findById(id);
+                if (user == null) {
+                    res.redirect("/admin/users?error=Usuario no encontrado.");
+                    return null;
+                }
+
+                model.put("user", user);
+
+                String userRole = user.getString("role");
+                model.put("selected" + userRole, true);
+
+                String successMessage = req.queryParams("message");
+                if (successMessage != null && !successMessage.isEmpty()) {
+                    model.put("successMessage", successMessage);
+                }
+
+                String errorMessage = req.queryParams("error");
+                if (errorMessage != null && !errorMessage.isEmpty()) {
+                    model.put("errorMessage", errorMessage);
+                }
+
+                return new ModelAndView(model, "user_edit_form.mustache");
+            } catch (NumberFormatException e) {
+                res.redirect("/admin/users?error=ID de usuario inválido.");
+                return null;
+            }
+        }, new MustacheTemplateEngine());
+
+        // POST: Actualizar usuario
+        post("/admin/users/:id/edit", (req, res) -> {
+            String idStr = req.params(":id");
+
+            if (idStr == null || idStr.isEmpty()) {
+                res.status(400);
+                res.redirect("/admin/users?error=ID de usuario no especificado.");
+                return "";
+            }
+
+            try {
+                Long id = Long.parseLong(idStr);
+                User user = User.findById(id);
+                if (user == null) {
+                    res.status(404);
+                    res.redirect("/admin/users?error=Usuario no encontrado.");
+                    return "";
+                }
+
+                String name = req.queryParams("name");
+                String password = req.queryParams("password");
+                String role = req.queryParams("role");
+
+                if (name == null || name.trim().isEmpty()) {
+                    res.status(400);
+                    res.redirect("/admin/users/" + id + "/edit?error=El nombre de usuario es requerido.");
+                    return "";
+                }
+
+                if (role == null || role.trim().isEmpty()) {
+                    res.status(400);
+                    res.redirect("/admin/users/" + id + "/edit?error=El rol es requerido.");
+                    return "";
+                }
+
+                User existing = User.findFirst("name = ? AND id != ?", name.trim(), id);
+                if (existing != null) {
+                    res.status(400);
+                    res.redirect("/admin/users/" + id + "/edit?error=El nombre de usuario ya está en uso.");
+                    return "";
+                }
+
+                user.set("name", name.trim());
+                user.set("role", role);
+
+                if (password != null && !password.trim().isEmpty()) {
+                    user.set("password", BCrypt.hashpw(password, BCrypt.gensalt()));
+                }
+
+                user.saveIt();
+
+                res.status(200);
+                res.redirect("/admin/users?message=Usuario " + name.trim() + " actualizado exitosamente.");
+                return "";
+            } catch (NumberFormatException e) {
+                res.status(400);
+                res.redirect("/admin/users?error=ID de usuario inválido.");
+                return "";
+            } catch (Exception e) {
+                System.err.println("Error al actualizar usuario: " + e.getMessage());
+                e.printStackTrace();
+                res.status(500);
+                res.redirect("/admin/users/" + idStr + "/edit?error=Error interno al actualizar el usuario.");
+                return "";
+            }
+        });
+
+        // POST: Eliminar usuario
+        post("/admin/users/:id/delete", (req, res) -> {
+            String idStr = req.params(":id");
+
+            if (idStr == null || idStr.isEmpty()) {
+                res.status(400);
+                res.redirect("/admin/users?error=ID de usuario no especificado.");
+                return "";
+            }
+
+            try {
+                Long id = Long.parseLong(idStr);
+                User user = User.findById(id);
+                if (user == null) {
+                    res.status(404);
+                    res.redirect("/admin/users?error=Usuario no encontrado.");
+                    return "";
+                }
+
+                String username = user.getString("name");
+                user.delete();
+
+                res.status(200);
+                res.redirect("/admin/users?message=Usuario " + username + " eliminado exitosamente.");
+                return "";
+            } catch (NumberFormatException e) {
+                res.status(400);
+                res.redirect("/admin/users?error=ID de usuario inválido.");
+                return "";
+            } catch (Exception e) {
+                System.err.println("Error al eliminar usuario: " + e.getMessage());
+                e.printStackTrace();
+                res.status(500);
+                res.redirect("/admin/users?error=Error interno al eliminar el usuario. Verifique que no tenga registros asociados.");
+                return "";
+            }
+        });
     } // Fin del método main
-    //Comentario prueba 4
 } // Fin de la clase App
