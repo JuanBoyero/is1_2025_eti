@@ -751,6 +751,47 @@ public class App {
             return new ModelAndView(model, "courses_list.mustache");
         }, new MustacheTemplateEngine());
 
+        // GET: Listado de profesores con sus materias
+        get("/admin/professors-courses", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+
+            List<Professor> professors = Professor.findAll().orderBy("surname ASC");
+            if (professors != null && !professors.isEmpty()) {
+                List<Map<String, Object>> professorList = new ArrayList<>();
+                for (Professor prof : professors) {
+                    Map<String, Object> profMap = new HashMap<>();
+                    profMap.put("name", prof.getString("name"));
+                    profMap.put("surname", prof.getString("surname"));
+
+                    List<Dictated> dictatedList = Dictated.where("idProfessor = ?", prof.getLongId());
+                    List<String> courseNames = new ArrayList<>();
+                    if (dictatedList != null) {
+                        for (Dictated d : dictatedList) {
+                            Course course = Course.findById(d.getLong("idCourse"));
+                            if (course != null) {
+                                courseNames.add(course.getString("name"));
+                            }
+                        }
+                    }
+                    profMap.put("courses", courseNames.isEmpty() ? "Sin materias asignadas" : String.join(", ", courseNames));
+                    professorList.add(profMap);
+                }
+                model.put("professors", professorList);
+            }
+
+            String successMessage = req.queryParams("message");
+            if (successMessage != null && !successMessage.isEmpty()) {
+                model.put("successMessage", successMessage);
+            }
+
+            String errorMessage = req.queryParams("error");
+            if (errorMessage != null && !errorMessage.isEmpty()) {
+                model.put("errorMessage", errorMessage);
+            }
+
+            return new ModelAndView(model, "professors_courses_list.mustache");
+        }, new MustacheTemplateEngine());
+
         // GET: Formulario para editar materia
         get("/admin/courses/:id/edit", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
