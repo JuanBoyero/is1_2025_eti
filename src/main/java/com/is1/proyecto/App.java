@@ -282,6 +282,16 @@ public class App {
             return new ModelAndView(model, "dashboard_alumno.mustache");
         }, new MustacheTemplateEngine());
 
+        // GET: Listado de materias para alumno
+        get("/alumno/materias", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+
+            List<Course> courses = Course.findAll().orderBy("name ASC");
+            model.put("courses", courses);
+
+            return new ModelAndView(model, "alumno_materias_list.mustache");
+        }, new MustacheTemplateEngine());
+
         // GET: Ruta para cerrar la sesión del usuario.
         get("/logout", (req, res) -> {
             // Invalida completamente la sesión del usuario.
