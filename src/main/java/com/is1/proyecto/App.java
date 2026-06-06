@@ -50,7 +50,7 @@ public class App {
      * Aquí se configuran todas las rutas y filtros de Spark.
      */
     public static void main(String[] args) {
-        port(8080); // Configura el puerto en el que la aplicación Spark escuchará las peticiones
+        port(8082); // Configura el puerto en el que la aplicación Spark escuchará las peticiones
                     // (por defecto es 4567).
         
         // --- MANEJO GLOBAL DE ERRORES ---
@@ -1233,5 +1233,22 @@ public class App {
                 return "";
             }
         });
+        // GET: Muestra el listado de materias
+        get("/courses/list", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+
+            Boolean loggedIn = req.session().attribute("loggedIn");
+            if (loggedIn == null || !loggedIn) {
+                res.redirect("/login?error=Debes iniciar sesión para acceder a esta página.");
+                return null;
+            }
+
+            List<Course> courses = Course.findAll().orderBy("name ASC");
+            if (courses != null && !courses.isEmpty()) {
+                model.put("courses", courses);
+            }
+
+            return new ModelAndView(model, "courses_list.mustache");
+        }, new MustacheTemplateEngine());
     } // Fin del método main
 } // Fin de la clase App
